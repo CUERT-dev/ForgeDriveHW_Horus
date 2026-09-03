@@ -517,7 +517,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "LVP_G0S4.kicad_pro",
+    "filename": "LVP_G0S4B.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -689,18 +689,18 @@
     "subpart_id_separator": 0,
     "top_level_sheets": [
       {
-        "filename": "LVP_G0S4.kicad_sch",
-        "name": "LVP_G0S4",
+        "filename": "LVP_G0S4B.kicad_sch",
+        "name": "LVP_G0S4B",
         "uuid": "1a6c144a-7454-4471-b4a5-7e9f7815fcbd"
       }
     ],
-    "used_designators": "R1-24,R27-29,J1-17,#PWR1-44,#PWR63-65,D1-10,C1-11,C21,Q1-2,H1-7,U1-10,JP1-3,F1-2,NT1",
+    "used_designators": "R1-24,R27-29,J1-17,#PWR1-44,#PWR63-65,D1-10,C1-13,C21,Q1-2,H1-7,U1-10,JP1-3,F1-2,NT1",
     "variants": []
   },
   "sheets": [
     [
       "1a6c144a-7454-4471-b4a5-7e9f7815fcbd",
-      "LVP_G0S4"
+      "LVP_G0S4B"
     ]
   ],
   "text_variables": {},
