@@ -1,0 +1,9 @@
+(version 1)
+(rule "VBOOT default"
+  (constraint clearance (min 2.5mm))
+  (condition "A.hasNetclass('VBOOT')")
+)
+(rule "VBOOT exceptions"
+  (constraint clearance (min 0.6mm))
+  (condition "A.hasNetclass('VBOOT') && (B.hasNetClass('HS_GateSig')|| B.hasNetClass('PHASE'))")
+)
