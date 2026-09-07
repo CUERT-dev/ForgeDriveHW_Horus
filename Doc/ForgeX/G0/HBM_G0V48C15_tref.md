@@ -14,7 +14,7 @@ export_on_save:
 > **Project:** ForgeX  
 > **Generation:** Gen0  
 > **Document:** HBM_G0V48C15 Technical Reference  
-> **Author:** Malak Ashraf  
+> **Author:** Omar Magdy
 > **Revision:** Rev. 0  
 > **Status:** Development  
 > **Date:** September 2026
@@ -43,14 +43,14 @@ the revised electrical requirements. The module is resized from the
 original **400 V / 5 A** operating range to **48 V / 15 A**.
 
 The updated power stage uses the **HGN036 MOSFET**, **EG2131 gate driver**,
- and **ACS712-20A current sensor**.
+and **ACS712-20A current sensor**.
 
 ### 1.1 Naming
 
 `HBM_G0V48C15` follows the ForgeX module naming convention:
 
 - `HBM` — Half-Bridge Module
-- `G0` — Generation 0
+- `G0`  — Generation 0
 - `V48` — 48 V voltage class
 - `C15` — 15 A current class
 
@@ -103,7 +103,7 @@ The following files will be linked here once they are available:
 
 ## 2. Interfaces & I/O
 
-![](Images_G0A/HBM0e.svg)
+> **Note:** The interface diagram is currently under development and will be updated once the final design is completed.
 
 The HBM interfaces with the remainder of the ForgeX system through dedicated power and low-voltage interfaces.
 
@@ -239,6 +239,7 @@ The selected gate-driver IC for the HBM is the `EG2131` from EG Micro.
 * **High gate-drive current:** The driver provides up to **1 A source current** and **1.5 A sink current**, providing sufficient drive capability for the selected MOSFET at the intended switching frequencies.
 * **Integrated interlock and deadtime:** The device incorporates half-bridge interlock logic and internal deadtime generation, with a typical deadtime of approximately **250 ns**. This provides protection against simultaneous turn-on of the high-side and low-side MOSFETs.
 * **Bootstrap high-side drive:** The high-side driver uses a floating bootstrap supply to drive the high-side MOSFET. The bootstrap supply is implemented using an external bootstrap diode and capacitor, eliminating the need for a separate isolated high-side gate-drive supply and simplifying the gate-drive implementation.
+
 ### 5.3 External Components
 
 The external components of the gate-drive circuit were selected based on the required switching speed, gate-drive current, bootstrap supply requirements, and supply decoupling.
@@ -348,7 +349,7 @@ I_{G,on}
 $$
 
 The EG2131 provides a specified gate-drive source current capability
-of approximately 1 A. Therefore, the calculated 180 mA Miller current is
+$I_{O+}$ of approximately 1.0 A. Therefore, the calculated 180 mA Miller current is
 well within the driver's source-current capability.
 
 **Turn-Off**
@@ -369,8 +370,8 @@ I_{G,off}
 225\,mA
 $$
 
-The EG2131 provides a specified gate-drive sink current capability of
-approximately 1.5 A. Therefore, the calculated 225 mA Miller current is
+The EG2131 provides a specified gate-drive sink current capability
+$I_{O-}$ of approximately 1.5 A. Therefore, the calculated 225 mA Miller current is
 also well within the driver's sink-current capability.
 
 The gate-current calculations confirm that the selected switching-speed
@@ -394,7 +395,7 @@ ringing and high switch-node `dv/dt`.
 The actual gate-current waveform is determined by the EG2131 output
 stage, MOSFET internal gate resistance, Miller plateau voltage, external
 gate resistance, and PCB parasitic inductance. Since the EG2131
-datasheet specifies the driver current capability but does not provide
+datasheet specifies the driver current capability (1.0 A source / 1.5 A sink) but does not provide
 a directly equivalent fixed output resistance for use in a simple
 resistive calculation, the final resistor value is not derived from an
 assumed driver resistance.
@@ -425,7 +426,7 @@ C_{GD}(V_{DS})
 $$
 
 The actual false-turn-on behavior depends on the nonlinear
-\(C_{GD}(V_{DS})\) characteristic, MOSFET threshold voltage, gate-loop
+$C_{GD}(V_{DS})$ characteristic, MOSFET threshold voltage, gate-loop
 impedance, temperature, and PCB parasitic inductances.
 
 The HGN036N08S datasheet specifies enhanced body-diode `dv/dt`
@@ -437,10 +438,10 @@ against false turn-on and excessive ringing.
 
 The EG2131 is specified as a half-bridge high-side/low-side gate driver
 with a high-side floating supply capability of up to 300 V and gate-drive
-output capability of approximately 1 A source and 1.5 A sink.
+output capability of approximately 1.0 A source and 1.5 A sink.
 
-The EG2131 also includes internal dead-time control and a specified
-typical dead time of approximately 250 ns.
+The EG2131 also includes internal dead-time control with a specified
+typical dead time of approximately 250 ns ($DT_{typ}=250\,ns$).
 
 No separate numerical `dv/dt` immunity limit is assumed here because
 such a value has not been established from the selected EG2131
@@ -629,141 +630,205 @@ and the selected decoupling network should therefore be rated appropriately for 
 
 The selected VCC decoupling network provides both local energy storage and high-frequency bypassing, helping to maintain a stable gate-driver supply and reduce supply-voltage transients during high-current switching transitions.
 
-
 #### 5.3.4 RC Snubber
 
-A first-pass RC snubber value was estimated from the effective switching-loop
+A first-pass RC snubber value was estimated from the effective switching-loop 
+inductance ($L_0 = 20\,\mathrm{nH}$) and the MOSFET parasitic output capacitance ($C_{oss} \approx 565\,\mathrm{pF}$). 
 
-inductance and the MOSFET parasitic capacitance. The initial values are:
+The initial capacitance is chosen as approximately four times $C_{oss}$ to effectively damp the resonance:
 
 $$
-C_{snub}\approx 4\times C_{oss}\approx2.26\,\mathrm{nF} \\\\[4pt]
-R_{snub}\approx\sqrt{\frac{L_0}{C_{oss}}}\approx5.9\,\Omega
+C_{snub} \approx 4 \times C_{oss} \approx 4 \times 565\,\mathrm{pF} \approx 2.26\,\mathrm{nF}
 $$
 
-where \(L_0\) represents the estimated high-frequency switching-loop
-inductance, including relevant MOSFET package and interconnect inductance.
-These values provide an initial damping network for the switch-node
-LC resonance. The final snubber values are to be determined experimentally
-or through switching-waveform simulation by evaluating the resulting
-overshoot, ringing, switching losses, and snubber dissipation.
-.
+The damping resistor is matched to the characteristic impedance of the parasitic LC tank formed by $L_0$ and $C_{oss}$:
 
-### 5.4 Current Sensing
+$$
+R_{snub} \approx \sqrt{\frac{L_0}{C_{oss}}} = \sqrt{\frac{20\,\mathrm{nH}}{565\,\mathrm{pF}}} \approx 5.95\,\Omega
+$$
 
-Since galvanic isolation is not enforced between the power and logic domains, low-side shunt current sensing is employed to provide a cost-effective and compact current measurement solution. The shunt is placed in the low-side current return path, allowing the resulting differential voltage to be amplified with respect to the local logic ground.
+Using these parameters, the initial RC snubber network values are selected as:
 
-The `TP181A1` current-sense amplifier from 3PEAK is employed for this function.
+$$
+\boxed{C_{snub} = 2.2\,\mathrm{nF}}
+$$
 
-**Datasheet:** [TP181A1](https://www.lcsc.com/datasheet/C2902351.pdf)
+$$
+\boxed{R_{snub} = 6.2\,\Omega}
+$$
 
-**Selection rationale:**
+where $L_0 = 20\,\mathrm{nH}$ represents the estimated high-frequency switching-loop inductance, including relevant MOSFET package and interconnect inductances. Standard nominal E24 resistor and capacitor values ($2.2\,\mathrm{nF}$ and $6.2\,\Omega$) were selected for practical implementation.
 
-* **Local availability and cost:** The device is readily available from local suppliers at a relatively low unit cost, making it practical for prototyping, production, and field replacement.
-* **Wide supply-voltage range:** The device operates from \(2.7\,\mathrm{V}\) to \(30\,\mathrm{V}\), providing substantial supply-voltage margin for the 3.3 V logic domain.
-* **High CMRR:** A typical common-mode rejection ratio (CMRR) of \(120\,\mathrm{dB}\) provides strong rejection of common-mode voltage appearing across the shunt during switching transients.
-* **Low gain error:** A typical gain error of \(\pm 0.1\%\) provides good measurement accuracy without requiring extensive gain calibration.
-* **High bandwidth:** The \(48\,\mathrm{kHz}\) bandwidth is sufficient for the intended current-feedback and monitoring applications while providing adequate response to the current waveform.
-* **High fixed gain:** The \(50\,\mathrm{V/V}\) gain allows the use of a low-value shunt resistor, reducing the power dissipated in the current-sensing path while still providing a useful ADC signal amplitude.
+The average power dissipation in the snubber resistor can be estimated as:
 
-**Shunt Resistor Selection**
+$$
+P_{snub} \approx C_{snub} \times V_{DS}^2 \times f_{SW} = 2.2\,\mathrm{nF} \times (48\,\mathrm{V})^2 \times 20\,\mathrm{kHz} \approx 0.101\,\mathrm{W}
+$$
 
-The shunt resistance is selected as a trade-off between measurement range, signal utilization, and power dissipation. For the nominal \(6.5\,\mathrm{A}\) peak-current version of the module, a \(5\,\mathrm{m\Omega}\) shunt resistor is employed. Higher-current variants can use proportionally lower shunt resistance values to reduce the voltage drop and associated power dissipation.
+These values provide an initial damping network for the switch-node LC resonance. The final snubber values and resistor power ratings shall be verified experimentally or through switching-waveform simulation by evaluating the resulting overshoot, ringing, switching losses, and snubber power dissipation under full load conditions.
 
-The shunt amplifier is biased at the midpoint of the \(3.3\,\mathrm{V} \) ADC range:
+#### 5.4 Current Sensing
 
-\[
-V_{bias} = \frac{3.3}{2}\,\mathrm{V}
-\]
+Since galvanic isolation between the power and logic domains provides inherent noise immunity and protects the microcontroller, a Hall-effect-based current sensor is employed for phase-current monitoring.
 
-This allows the same ADC input to represent both positive and negative current, with the zero-current condition centered around \(1.65\,\mathrm{V}\).
+The **ACS712** fully integrated Hall-effect current sensor IC from Allegro MicroSystems is selected for this function.
 
-For a \(5\,\mathrm{m\Omega}\) shunt and a fixed amplifier gain of \(50\,\mathrm{V/V}\), the sensed voltage is:
+**Datasheet:** [ACS712 Datasheet](https://www.sparkfun.com/datasheets/Breakouts/ACS712-datasheet.pdf)
 
-\[
-V_{signal} = I \times 50 \times R_{shunt} + \frac{3.3}{2}
-\]
+**Selection Rationale:**
 
-Substituting the selected shunt resistance:
+* **Galvanic Isolation:** Integrated copper conduction path provides up to $2.1\,\mathrm{kV_{RMS}}$ galvanic isolation, fully decoupling the high-power switching node from the low-voltage control domain.
+* **Low Internal Resistance:** The internal conductor resistance is typically $1.2\,\mathrm{m\Omega}$, minimizing conduction losses and thermal dissipation compared to traditional shunt topologies.
+* **Bidirectional Sensing Capability:** Naturally biased at $V_{CC} / 2$, allowing seamless measurement of both positive and negative AC/phase current swings.
+* **Precise Proportional Output:** Generates an analog voltage output directly proportional to the AC or DC sensed current.
 
-\[
-V_{signal} = I \times 0.25\,\mathrm{V/A} + 1.65\,\mathrm{V}
-\]
+**Sensitivity and Output Characteristics**
 
-Thus, the current-sensing path provides a measurement gain of \(0.25\,\mathrm{V/A}\), with the nominal \(0\,\mathrm{A}\) point located at \(1.65\,\mathrm{V}\).
+The ACS712 features an internal zero-current output voltage set to half of its supply voltage:
 
-Ideally, the \(0 \rightarrow 3.3\,\mathrm{V} \) ADC range corresponds to approximately:
+$$
+V_{OUT(Q)} = \frac{V_{CC}}{2}
+$$
 
-\[
-I_{max} = \frac{3.3-1.65}{0.25} = 6.6\,\mathrm{A}
-\]
+Operating from a $5.0\,\mathrm{V}$ rail ($V_{CC} = 5.0\,\mathrm{V}$), the quiescent output voltage at $0\,\mathrm{A}$ is:
 
-\[
-I_{min} = \frac{0-1.65}{0.25} = -6.6\,\mathrm{A}
-\]
+$$
+V_{bias} = 2.5\,\mathrm{V}
+$$
 
-giving a theoretical bidirectional measurement range of approximately:
+For the target operating conditions, the **ACS712-20A** variant is selected. The nominal sensitivity for this model is:
 
-\[
-\pm 6.6\,\mathrm{A}
-\]
+$$
+\text{Sensitivity} = 100\,\mathrm{mV/A}
+$$
 
-In practice, the usable range is slightly lower due to amplifier output swing, offset, gain error, ADC tolerances, and the desired operating margin from the ADC rails.
+The overall current-to-voltage transfer function is given by:
 
-**Shunt Power Dissipation**
+$$
+V_{OUT} = \left(I \times \text{Sensitivity}\right) + V_{bias}
+$$
 
-The power dissipated by the shunt resistor is determined by the RMS current flowing through it:
+$$
+V_{OUT} = \left(I \times 0.100\,\mathrm{V/A}\right) + 2.5\,\mathrm{V}
+$$
 
-\[
-P_{shunt} = I^2 \times R_{shunt}
-\]
+Thus, the current-sensing path sensitivity is:
 
-At the nominal \(6.5\,\mathrm{A}\) current level:
+$$
+\boxed{\text{Sensitivity} = 0.100\,\mathrm{V/A}}
+$$
 
-\[
-P_{shunt} = 6.5^2 \times 5\,\mathrm{m\Omega}
-\approx 0.21\,\mathrm{W}
-\]
+**Measurement Range and ADC Interface**
 
-A (2512) footprint is used for the shunt resistor. Depending on the selected resistor technology and manufacturer, (2512) shunts with power ratings up to approximately \(1\,\mathrm{W}\) are readily available, providing substantial thermal margin relative to the nominal dissipation.
+For the ACS712-20A, the theoretical bidirectional measurement range is $\pm 20\,\mathrm{A}$. Over the full $5.0\,\mathrm{V}$ supply rail, the output voltage swing is:
 
-**Valid Measurement Window**
+$$
+V_{OUT,max} = +20\,\mathrm{A} \times 0.100\,\mathrm{V/A} + 2.5\,\mathrm{V} = 4.5\,\mathrm{V}
+$$
 
-Because the shunt is located in the low-side current path, the current-sense signal is only representative of the phase current while the corresponding low-side MOSFET provides the active current-return path. During the high-side conduction interval, the shunt is outside the primary current path and therefore cannot provide continuous phase-current information.
+$$
+V_{OUT,min} = -20\,\mathrm{A} \times 0.100\,\mathrm{V/A} + 2.5\,\mathrm{V} = 0.5\,\mathrm{V}
+$$
 
-Additionally, the measurement should not be sampled immediately after the low-side MOSFET is enabled. The switching transition can contain MOSFET reverse-recovery current, capacitive displacement current, commutation current, and other transient components that do not accurately represent the steady-state load current.
+$$
+\boxed{I_{range} = \pm 20\,\mathrm{A}}
+$$
 
-A minimum blanking interval of approximately \(300\,\mathrm{ns}\) after low-side MOSFET turn-on is therefore recommended before sampling the shunt amplifier output. The exact blanking time should ultimately be verified against the measured switching waveform, amplifier settling behavior, and the operating conditions of the specific power stage.
+**ADC Attenuation Network ($3.3\,\mathrm{V}$ Domain)**
 
+Because the ACS712 produces an output up to $4.5\,\mathrm{V}$ (exceeding the $3.3\,\mathrm{V}$ ADC limit), a precision resistor divider is placed at the output to scale the voltage swing down to a safe range ($0.33\,\mathrm{V} \to 2.97\,\mathrm{V}$):
+
+$$
+\text{Scale Factor} = \frac{R_2}{R_1 + R_2} = \frac{20\,\mathrm{k\Omega}}{10\,\mathrm{k\Omega} + 20\,\mathrm{k\Omega}} = \frac{2}{3}
+$$
+
+$$
+V_{ADC} = V_{OUT} \times \frac{2}{3}
+$$
+
+This maps the zero-current ($0\,\mathrm{A}$) point from $2.5\,\mathrm{V}$ to **$1.667\,\mathrm{V}$**, fitting comfortably within the $0 \to 3.3\,\mathrm{V}$ ADC voltage rail.
+
+**Internal Conductor Power Dissipation**
+
+Due to the extremely low internal primary conductor resistance ($R_{primary} \approx 1.2\,\mathrm{m\Omega}$), continuous power loss is drastically reduced compared to external shunts:
+
+$$
+P_{sensor} = I_{RMS}^2 \times R_{primary}
+$$
+
+At the nominal $15\,\mathrm{A}$ peak operating current ($I_{RMS} \approx 10.61\,\mathrm{A_{RMS}}$):
+
+$$
+P_{sensor} = (10.61\,\mathrm{A})^2 \times 1.2\,\mathrm{m\Omega} \approx 0.135\,\mathrm{W}
+$$
+
+$$
+\boxed{P_{sensor} \approx 135\,\mathrm{mW}}
+$$
+
+This minimal power dissipation eliminates thermal derating issues and reduces overall PCB thermal stress.
+
+**Noise Filtering and Bandwidth Adjustment**
+
+The ACS712 includes an internal $80\,\mathrm{kHz}$ bandwidth limit. An external filter capacitor ($C_F$) connected to the `FILTER` pin sets the overall system bandwidth and mitigates high-frequency switching noise:
+
+$$
+f_{-3\mathrm{dB}} = \frac{1}{2\pi \times 20\,\mathrm{k\Omega} \times C_F}
+$$
+
+A $10\,\mathrm{nF}$ ceramic capacitor ($C_F = 10\,\mathrm{nF}$) is selected, establishing a cutoff frequency of approximately:
+
+$$
+f_{-3\mathrm{dB}} \approx 796\,\mathrm{Hz}
+$$
+
+This bandwidth configuration provides effective filtering of $20\,\mathrm{kHz}$ PWM switching noise while maintaining adequate response speed for phase current monitoring and feedback control.
 
 ### 5.5 Voltage Sensing
 
-For the `HBM_G0VH4C5`, galvanic isolation is not enforced between the power and logic domains, and `PGND` and `LGND` are therefore required to be connected at a defined point within the system. This permits the switch-node voltage to be sensed directly with respect to `LGND` using a high-voltage resistive divider.
+For the `HBM_G0V48C15`, galvanic isolation is not enforced between the power and logic domains, and `PGND` and `LGND` are therefore required to be connected at a defined point within the system. This permits the switch-node and DC-link voltages to be sensed directly with respect to `LGND` using a high-voltage resistive divider.
 
-The divider ratio is selected such that the maximum expected switch-node voltage is mapped into the valid 0--3.3 V range of the analog sensing circuitry:
+The divider ratio is selected such that the nominal $48\,\mathrm{V}$ DC-link operating voltage, including maximum transient overvoltage events up to $60\,\mathrm{V}$, is mapped into the valid $0 \to 3.3\,\mathrm{V}$ range of the analog sensing circuitry:
 
-\[
-V_{signal} = V_{sw} \times \frac{3.3\,\mathrm{k}}{450\,\mathrm{k}+3.3\,\mathrm{k}}
-\]
+$$
+V_{signal} = V_{sw} \times \frac{R_2}{R_1 + R_2}
+$$
+
+Using a lower resistor $R_2 = 10\,\mathrm{k\Omega}$ and an upper resistor network $R_1 = 180\,\mathrm{k\Omega}$ ($R_{total} = 190\,\mathrm{k\Omega}$), the voltage divider transfer function is:
+
+$$
+V_{signal} = V_{sw} \times \frac{10\,\mathrm{k\Omega}}{180\,\mathrm{k\Omega} + 10\,\mathrm{k\Omega}} = V_{sw} \times \frac{1}{19}
+$$
 
 This gives the following nominal full-scale mapping:
 
-\[
-450\,\mathrm{V} \rightarrow 3.276\,\mathrm{V}
-\]
+$$
+60\,\mathrm{V} \rightarrow 3.158\,\mathrm{V}
+$$
 
-The resulting scaling makes effective use of the available ADC input range while retaining a small margin below the 3.3 V rail. The divider is implemented as a series string of high-voltage resistors so that the voltage stress across each individual component remains within its rated working voltage. The physical implementation also maintains the required creepage and clearance distances across the high-voltage portion of the divider.
+$$
+48\,\mathrm{V} \rightarrow 2.526\,\mathrm{V}
+$$
 
-The power dissipated by the divider under a 400 V DC switch-node condition is approximately:
+$$
+\boxed{\text{Scaling Factor} = 0.0526\,\mathrm{V/V}}
+$$
 
-\[
-P_{divider} = \frac{400^2}{450\,\mathrm{k}+3.3\,\mathrm{k}}
-\approx 0.353\,\mathrm{W}
-\]
+The resulting scaling makes effective use of the available ADC input range while retaining a small safety margin below the $3.3\,\mathrm{V}$ rail to prevent clipping during voltage spikes or inductive ringing. The divider upper leg $R_1$ is implemented as a series string of resistors to ensure that the voltage stress across each individual component remains within its rated working voltage, while maintaining the required creepage and clearance distances across the high-voltage portion of the PCB layout.
 
-This dissipation is distributed across the series resistor string rather than concentrated in a single component, reducing the voltage and power stress on each individual resistor.
+The power dissipated by the divider under the nominal $48\,\mathrm{V}$ DC-link condition is approximately:
 
-The switch-node measurement is particularly useful in operating conditions where the half-bridge is in a high-impedance state, with both MOSFETs turned off. In this condition, the switch-node voltage is no longer actively driven by either device and can provide useful information about the external load, motor phase, or commutation state. This makes the sensing path applicable to control and diagnostic functions such as high-impedance phase-voltage measurement in motor-control applications.
+$$
+P_{divider} = \frac{(48\,\mathrm{V})^2}{180\,\mathrm{k\Omega} + 10\,\mathrm{k\Omega}} \approx 0.0121\,\mathrm{W}
+$$
+
+$$
+\boxed{P_{divider} \approx 12.1\,\mathrm{mW}}
+$$
+
+This dissipation is distributed across the series resistor string rather than concentrated in a single component, reducing the thermal and voltage stress on each individual resistor.
+
+The switch-node measurement is particularly useful in operating conditions where the half-bridge is in a high-impedance state, with both MOSFETs turned off. In this condition, the switch-node voltage is no longer actively driven by either device and can provide useful information about the external load, motor phase Back-EMF, or commutation state. This makes the sensing path applicable to control and diagnostic functions such as high-impedance phase-voltage measurement and zero-crossing detection in motor-control applications.
 
 ### 5.6 References
 
@@ -772,442 +837,11 @@ The switch-node measurement is particularly useful in operating conditions where
 * [Seminar 1400 Topic 2 APDX Estimating MOSFET Parameters from the Data Sheet](https://www.ti.com/lit/ml/slup170/slup170.pdf?ts=1786803369734)
 
 ---
+<div style="page-break-after: always;"></div>
 
-## 6. Simulation
+Note: This section is currently under development.
+ Simulation models and hardware validation results are being updated for the latest module revision 
+ and will be finalized upon complete testing.
 
-Simulation is used as a first-pass validation and design tool for the
-HBM.
+<div style="page-break-after: always;"></div>
 
-The simulations are intended to:
-
-- Validate initial electrical estimates
-- Evaluate the effects of layout-related parasitics
-- Assist with component sizing
-- Investigate switching behavior and transient effects
-- Provide a basis for first-pass design tuning
-
-Simulation results are not considered a substitute for physical testing
-and validation. Their accuracy depends on the quality, fidelity, and
-applicability of the underlying semiconductor, parasitic, and system
-models.
-
-The primary simulation focus is the power-electronics behavior of the
-module and its associated switching infrastructure.
-
-### 6.1 MOSFET Model
-
-An LTspice VDMOS-based MOSFET model was developed for the selected
-`STFH24N60M2`. The model parameters were tuned and tested against the
-available datasheet characteristics and test conditions.
-
-The model-development process was assisted by the
-[Hendrik Jan Zwerver LTspice VDMOS modeling guide](http://www.magma.ca/~legg/SR5/LTspice_build_in_VDmos_model.pdf).
-
-The following test circuits are provided under `simulation/`:
-
-- `simulation/STFH24N60M2_test_bodyDiode.asc` — DC body-diode characteristics
-- `simulation/STFH24N60M2_test_bodyDiode2.asc` — Double-pulse test and reverse-recovery tuning
-- `simulation/STFH24N60M2_test_cap.asc` — MOSFET parasitic-capacitance characterization
-- `simulation/STFH24N60M2_test_outChar.asc` — Output characteristics
-- `simulation/STFH24N60M2_test_tranChar.asc` — Transfer characteristics
-
-![alt text](Images_G0A/stfh24n60m2_ltspice.png)
-
-**Model Tuning Approach**
-
-The model was tuned primarily around the intended operating point rather
-than attempting to reproduce every datasheet characteristic with equal
-accuracy.
-
-The LTspice VDMOS model provides a limited set of degrees of freedom
-compared with a detailed manufacturer subcircuit. Consequently, the
-available parameters were selected and adjusted to provide useful
-agreement with the MOSFET behavior in the operating region relevant to
-the HBM.
-
-For example, parameters such as \(K_P\) were tuned around the intended
-operating drain-current region rather than being optimized solely for
-accuracy in the saturation region.
-
-Datasheet test circuits and their corresponding operating conditions were
-used as references during parameter tuning.
-
-This approach represents a deliberate compromise between **model
-accuracy and simulation performance**. A detailed manufacturer
-subcircuit could potentially provide greater fidelity across a wider
-range
-of operating conditions, but the VDMOS-based model provides a simpler and
-faster model for iterative power-electronics simulation.
-
-### 6.2 MOSFET Gate-Driver Model
-
-A behavioral LTspice model of the `L6388` gate driver was developed to
-reproduce the relevant characteristics of the gate-driver IC and its
-interaction with the MOSFET.
-
-The model was developed using the available datasheet information and
-tuned against the specified gate-driver characteristics, including:
-
-- Logic-input thresholds and hysteresis
-- Propagation delays
-- Typical deadtime
-- Gate-source and gate-sink output impedance
-- UVLO behavior
-- Internal bootstrap-diode behavior
-
-![alt text](Images_G0A/l6388_ltspice.png)
-
-The model is primarily intended to reproduce the gate driver's switching
-behavior and its interaction with the MOSFET gate network rather than to
-model the internal semiconductor implementation of the IC.
-
-The following test circuit is provided under `simulation/`:
-
-- `simulation/L6388_test.asc` — Gate-driver sourcing and sinking behavior using a
-  `1000 pF` load, used to compare the behavioral model against the
-  datasheet characteristics.
-
-### 6.3 HBM_G0VH4C5 Module Model
-
-A simulation model was developed for the `HBM_G0VH4C5` module to
-evaluate the electrical behavior of the complete half-bridge power stage.
-
-The model includes representations of:
-
-- Voltage-sensing behavior
-- Current-sensing behavior
-- MOSFET package parasitics
-- Power-input connection inductance
-- High-frequency switching-loop inductance
-- Gate-drive loop inductance
-- Shunt-resistor behavior
-- Other first-order parasitic elements relevant to the module
-
-![alt text](Images_G0A/hbm_g0vh4c5_ltspice.png)
-
-The model is intended to provide a first-order representation of the
-module's electrical behavior and to evaluate the interaction between the
-power stage, gate-drive circuitry, sensing circuitry, and parasitic
-elements.
-
-### 6.4 Inductive-Load Single-Leg Inverter Test
-
-The single-leg inverter model serves as a performance indicator for the
-`HBM_G0VH4C5` power stage.
-
-It provides a simplified environment for evaluating:
-
-- Switching behavior
-- Gate-drive performance
-- Commutation behavior
-- Switch-node voltage overshoot and ringing
-- Load-current behavior
-- Estimated switching losses
-- Effects of parasitic inductance and resistance
-
-The test environment is intentionally simpler than the complete
-system-level inverter, allowing individual characteristics of the HBM
-power stage to be evaluated before system-level integration.
-
-The single-leg inverter simulations include expected parasitic
-impedances of approximately:
-
-\[
-R_{PGND-LGND}=10\,\mathrm{m\Omega}
-\]
-
-and:
-
-\[
-L_{PGND-LGND}=20\,\mathrm{nH}
-\]
-
-between `PGND` and `LGND` for typical expected applications of the
-module.
-
-These parasitic elements allow the simulation to investigate logic
-reference shifts, ground bounce, common-impedance coupling, and related
-noise/EMI effects resulting from the interaction between the power and
-logic domains.
-
-#### 6.4.1 SLinverter Test0
-
-**Simulation file:** `simulation/HBM_SLinverter_test.asc`
-
-This test applies a **100 kHz PWM signal with 50% duty cycle** and no
-sinusoidal carrier to a **2 kW RL load** with:
-
-\[
-L_{Load}=10\,\mu\mathrm{H}
-\]
-
-The load resistance was selected to correspond to approximately 2 kW
-operation.
-
-
-**Load Resistor Sizing**
-\[
-\begin{aligned}
-V_{A} &= V_{VDCH}/2  \\[4pt] 
-V_{n,RMS} &= \frac{4V_{A}}{nπ \sqrt{2}} \\[4pt]
-V_{1,RMS} &= 180 \\[4pt]
-V_{3,RMS} &= 60 \\[4pt]
-XL_1&​=2πfL≈6.28Ω \\[4pt]
-XL_2&​=3\times2πfL≈18.85Ω \\[4pt]
-P_{Load} &= \frac{V_{1,RMS}^2R_{Load}}{R_{Load}^2+XL_{1}^2} + \frac{V_{3,RMS}^2R_{Load}}{R_{Load}^2+XL_{3}^2} \\[4pt]
-R_{Load} &= 14.21\,\Omega, 2.92\,\Omega \quad\text{(Choosing 14.21 for lower peak current)} \\[4pt] 
-R_{Load}& \approx14\,\Omega
-\end{aligned}
-\]
-
-**Split-Rail Capacitor Sizing**
-\[
- C ≥ \frac{\sqrt{2}I_{rms}}{2 \pi f_{SW}ΔV}
-\]
-choosing a 20uF per cap results in 
-\[
- ΔV = 1.35V \\[4pt]
- V_{midpoint} = 200 \pm 1.35
-\]
-
-**Results & Notable Plots**
-![alt](Images_G0A/SLinvtest0_LoadVoltageCurrent.svg)
-![alt](Images_G0A/SLinvtest0_SwitchNodeVoltage.svg)
-![alt](Images_G0A/SLinvtest0_GateCurrents.svg)
-![alt](Images_G0A/SLinvtest0_HighSideTurnOnOff.svg)
-
-    HBM INVERTER SLinverter Test0 RESULTS
-    --- Power ---
-    Efficiency interval : 1.500 -> 1.700 ms
-    Average input power : 2016.217 W
-    Average output power: 1969.905 W
-    Efficiency          : 97.703 %
-    --- MOSFET Losses ---
-    High-side avg loss  : 19.066 W
-    Low-side avg loss   : 18.833 W
-    Total MOSFET loss   : 37.899 W
-    --- VDS Stress ---
-    High-side VDS max   : 418.979 V
-    Low-side VDS max    : 418.874 V
-    High-side VDS min   : -11.204 V
-    Low-side VDS min    : -11.046 V
-
----
-
-#### 6.4.2 SLinverter Test1
-
-**Simulation file:** `simulation/HBM_SLinverter_test1.asc`
-
-This test applies a **10 kHz sinusoidal PWM signal** with a modulation
-index of:
-
-\[
-m=0.92
-\]
-
-to a **2 kW RL load** with:
-
-\[
-L_{Load}=1\,\mathrm{mH}
-\]
-
-The load resistance was selected to correspond to approximately 2 kW
-operation.
-
-**Load Resistor Sizing**
-\[
-\begin{aligned}
-V_{A} &= V_{VDCH}/2  \\[4pt] 
-V_{1,RMS} &= m\times \frac{200}{\sqrt{2}} = 130.1 \\[4pt]
-XL&​=2πfL≈0.314\Omega \\[4pt]
-P_{Load} &= \frac{V_{1,RMS}^2R_{Load}}{R_{Load}^2+XL^2} \\[4pt]
-R_{Load} &= 8.45\,\Omega,  11.66\,m\Omega \quad\text{(Choosing 8.45 for lower peak current)} \\[4pt] 
-R_{Load} &\approx8.5\,\Omega
-\end{aligned}
-\]
-
-**Split-Rail Capacitor Sizing**
-\[
- C ≥ \frac{\sqrt{2}I_{rms}}{​2\pi f_{elec}ΔV} \\[4pt]
- ΔV = 13.5 \\[4pt]
- C \approx 5\,\mathrm{mF} \\[4pt]
- V_{midpoint} = 200 \pm 13.5 \\[4pt]
-\]
-
-
-**Results & Notable Plots**
-![alt](Images_G0A/SLinvtest1_LoadVoltageCurrent.svg)
-![alt](Images_G0A/SLinvtest1_SwitchNodeVoltage.svg)
-![alt](Images_G0A/SLinvtest1_GateCurrents.svg)
-![alt](Images_G0A/SLinvtest1_HighSideTurnOnOff.svg)
-
-    HBM INVERTER SLinverter Test0 RESULTS
-    --- Power ---
-    Efficiency interval : 24 -> 44 ms
-    Average input power : 1934.394 W
-    Average output power: 1872.306 W
-    Efficiency          : 96.790 %
-    --- MOSFET Losses ---
-    High-side avg loss  : 26.604 W
-    Low-side avg loss   : 23.628 W
-    Total MOSFET loss   : 50.232 W
-    --- VDS Stress ---
-    High-side VDS max   : 428.413 V
-    Low-side VDS max    : 434.378 V
-    High-side VDS min   : -13.069 V
-    Low-side VDS min    : -13.109 V
-
-### 6.5 Digest and Conclusion
-
-The single-leg inverter simulations provide a first-pass validation of the
-`HBM_G0VH4C5` power stage under both high-frequency hard-switching and
-sinusoidal PWM operating conditions.
-
-The simulations confirm the expected overall switching behavior and provide
-an initial assessment of the following key design aspects:
-
-- MOSFET switching and commutation behavior
-- Gate-driver operation and gate-drive waveforms
-- Switch-node voltage overshoot and ringing
-- MOSFET voltage stress
-- Load-current behavior
-- Estimated MOSFET switching and conduction losses
-- Power-to-logic ground interaction and ground bounce
-- Effects of the estimated PCB and package parasitics
-
-Under the simulated conditions, the inverter achieved approximately **97.7%**
-efficiency in the high-frequency Test0 case and **96.8%** efficiency in the
-sinusoidal PWM Test1 case. The total simulated MOSFET losses were approximately
-**37.9 W** and **50.2 W**, respectively.
-
-The simulated maximum MOSFET drain-source voltage reached approximately
-**419 V** in Test0 and **434 V** in Test1. These results identify the
-switch-node voltage overshoot as an important hardware-validation point,
-particularly because the simulation includes estimated rather than measured
-parasitics.
-
-The simulations also produced negative drain-source voltage excursions of
-approximately **11--13 V** during commutation. This behavior is attributed to
-the interaction between the commutation current, parasitic inductance, and
-the MOSFET body-diode/freewheeling path, and should be verified experimentally
-during double-pulse and inverter testing.
-
-A significant ground-reference excursion was observed between `PGND` and
-`LGND`, reaching approximately:
-
-\[
-V_{PGND-LGND}\approx-0.6\,\mathrm{V}\ldots+0.6\,\mathrm{V}
-\]
-
-with an average magnitude of approximately **0.2 V** under the simulated
-worst-case conditions. This highlights the importance of minimizing the
-common impedance between the power and logic domains. In particular, the
-result reinforces the need for careful PCB grounding, short gate-drive
-return paths, and adequate noise immunity at the MGD logic inputs.
-
-Overall, the simulations indicate that the proposed HBM power-stage design
-is viable as a first-pass implementation, while identifying **switch-node
-overshoot, commutation transients, and PGND/LGND ground bounce** as the
-primary areas requiring hardware verification.
-
-The simulation results therefore serve as a baseline for subsequent
-prototype testing and layout refinement rather than as a replacement for
-physical validation.
-
----
-
-## 7. Layout Considerations & Highlights
-
-Particular attention is given to the following layout-critical aspects:
-
-- High-frequency commutation-loop area
-- Gate-drive loop area
-- Switch-node copper geometry
-- Local DC-link decoupling
-- Current-sense layout
-- Ground and reference paths
-- Creepage and clearance
-- Thermal paths
-- EMI-sensitive interfaces
-
-**High-Voltage Divider**
-
-The high-voltage switch-node sensing divider is implemented as a series string of high-voltage resistors. Due to the required resistance value and the voltage stress across the divider, the resistor string is arranged in a serpentine or "snake-like" layout, with the resistor sections alternating between PCB layers. This arrangement allows the required resistance and voltage rating to be distributed across multiple components while maintaining the required creepage distance within the available PCB area.
-
-Particular attention is given to the physical routing of the high-voltage divider, ensuring that adjacent sections of the resistor string maintain adequate creepage and clearance from other circuitry and from lower-voltage nodes.
-
-The high-voltage divider layout therefore represents a compromise between electrical spacing, resistor voltage distribution, available PCB area, and practical component placement. The serpentine arrangement allows the divider to satisfy these requirements without requiring an excessively large dedicated PCB region.
-
-**Gate-Drive Component Placement**
-
-The gate resistors are placed as close as practical to the MOSFET gate terminals. Minimizing the physical distance between the gate resistor and the gate pin reduces the parasitic inductance of the gate-drive path and helps ensure that the intended gate resistance dominates the switching behavior. This reduces gate ringing and limits high-frequency voltage overshoot at the MOSFET gate.
-
-The gate-source bleeder resistors are similarly placed close to the MOSFET gate and source terminals. This minimizes the impedance of the local gate-source discharge path and ensures that the MOSFET gate is held at a well-defined potential when the gate driver is inactive or disconnected.
-
-The gate-driver decoupling capacitors are placed immediately adjacent to the MGD supply and ground pins. This minimizes the high-frequency supply-loop inductance and provides a low-impedance local current source for the transient current demanded by the gate driver during MOSFET switching.
-
-For the high-side gate driver, the bootstrap capacitor is likewise placed as close as practical to the MGD bootstrap and high-side supply/reference pins. Minimizing the bootstrap loop area reduces parasitic inductance and voltage transients associated with the high-frequency charging and discharging currents of the bootstrap network.
-
-Overall, the placement strategy keeps the gate-drive components physically close to the devices they directly serve, minimizing parasitic interconnect inductance and reducing the susceptibility of the gate-drive network to ringing, overshoot, and high-frequency electromagnetic coupling.
-
-**Creepage**
-Creepage requirements are considered throughout the PCB layout, with an average creepage distance of approximately \(3\,\mathrm{mm}\) maintained across the board for the high-voltage regions. The minimum creepage condition is localized to the TO-220 MOSFET footprints, where the package geometry and pad arrangement impose the most restrictive spacing.
-
-![alt](Images_G0A/HBM0e1.svg)
-**Attention was paid to the following critical current loops, as illustrated in the previous figure.**
-
-**1. High-Frequency Power Loop**
-
-The high-frequency power loop is formed by the high-frequency decoupling capacitors, the high-side MOSFET, and the low-side MOSFET. The primary current path is:
-
-\[
-+C_{HF} \rightarrow \text{High-Side FET Drain} \rightarrow \text{High-Side FET Source} \rightarrow \\[4pt]
- \text{Low-Side FET Drain} \rightarrow \text{Low-Side FET Source} \rightarrow -C_{HF}
-\]
-
-This loop carries the highest \(di/dt\) currents in the power stage and is therefore minimized in both physical area and parasitic inductance.
-
-Polypropylene film capacitors are used for the high-frequency decoupling network due to their low ESR and low ESL, allowing them to provide a low-impedance path for the high-frequency switching current.
-
-**2. High-Side FET Gate-Drive Loop**
-
-The high-side gate-drive loop is kept as small as practical to minimize parasitic inductance in the gate-drive path. Minimizing the loop area reduces the voltage induced by the high \(di/dt\) gate-drive current and helps limit gate ringing, overshoot, and unwanted coupling into adjacent circuitry.
-
-**3. Low-Side FET Gate-Drive Loop**
-
-The low-side gate-drive loop is similarly minimized to reduce parasitic inductance and the resulting voltage transients associated with the high \(di/dt\) gate-drive current. A compact gate-drive loop helps maintain controlled \(V_{GS}\) transitions and reduces the susceptibility of the gate signal to ringing and noise.
-
-**4. Shunt Connection**
-
-Particular attention is given to the Kelvin connection between the current-sense shunt resistor and the shunt amplifier. The sense connections are routed independently from the high-current path so that the voltage developed across the shunt is measured with minimal influence from parasitic PCB resistance and inductance.
-
-This reduces measurement error and minimizes the coupling of common-mode switching noise into the current-sensing circuitry.
-
-**5. MGD COM--LGND Connection**
-
-The connection between `MGD COM` and `LGND` is intentionally implemented through a parallel RC network. This prevents substantial high-frequency current associated with the power switching loop from flowing through the intended logic-ground reference and disturbing the defined star-grounding scheme.
-
-At the same time, the capacitor provides a low-impedance path for PWM signal edges and other high-frequency components, maintaining a suitable high-frequency reference between `MGD COM` and `LGND` without establishing a low-impedance DC path for power-current components.
-
-This arrangement therefore provides a compromise between maintaining the intended ground-domain topology at low frequencies and providing a controlled high-frequency return path for the gate-drive and PWM circuitry.
-
----
-
-## 8. Field Tests and Validation 🛠️
-
-[Document laboratory testing, measurements, test conditions, and
-comparison against simulation.]
-
----
-
-## 9. Known Issues and Limitations 🛠️
-
-[Document known limitations of Rev. A / Gen0.]
-
----
-
-## 10. Revisions
-
-| Revision | Date | Description |
-|---|---|---|
-| Rev. 0 | August 2026 | Initial technical reference |
