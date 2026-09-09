@@ -39,9 +39,9 @@
         "other_text_thickness": 0.15,
         "other_text_upright": false,
         "pads": {
-          "drill": 0.0,
-          "height": 1.0,
-          "width": 2.51
+          "drill": 0.9,
+          "height": 1.5,
+          "width": 1.5
         },
         "silk_line_width": 0.1,
         "silk_text_italic": false,
@@ -60,13 +60,13 @@
           "hatch_smoothing_level": 0,
           "hatch_smoothing_value": 0.1,
           "hatch_thickness": 1.0,
-          "min_clearance": 0.5,
+          "min_clearance": 1.0,
           "min_island_area": 10.0,
           "min_thickness": 0.25,
           "pad_connection": 2,
           "remove_islands": 0,
           "thermal_relief_gap": 0.5,
-          "thermal_relief_spoke_width": 0.8
+          "thermal_relief_spoke_width": 0.5
         }
       },
       "diff_pair_dimensions": [
@@ -160,7 +160,7 @@
         "min_text_thickness": 0.08,
         "min_through_hole_diameter": 0.3,
         "min_track_width": 0.25,
-        "min_via_annular_width": 0.25,
+        "min_via_annular_width": 0.15,
         "min_via_diameter": 0.5,
         "solder_mask_to_copper_clearance": 0.005,
         "use_height_for_length_calcs": true
@@ -170,7 +170,7 @@
           "td_onpthpad": true,
           "td_onroundshapesonly": false,
           "td_onsmdpad": true,
-          "td_ontrackend": true,
+          "td_ontrackend": false,
           "td_onvia": true
         }
       ],
@@ -212,10 +212,10 @@
       "track_widths": [
         0.0,
         0.25,
-        0.3,
         0.5,
         1.0,
-        2.0
+        1.5,
+        3.0
       ],
       "tuning_pattern_settings": {
         "diff_pair_defaults": {
@@ -249,7 +249,7 @@
           "drill": 0.0
         },
         {
-          "diameter": 1.0,
+          "diameter": 0.8,
           "drill": 0.5
         },
         {
@@ -475,6 +475,7 @@
       "footprint_filter": "ignore",
       "footprint_link_issues": "warning",
       "four_way_junction": "ignore",
+      "global_label_dangling": "warning",
       "ground_pin_not_ground": "warning",
       "hier_label_mismatch": "error",
       "isolated_pin_label": "warning",
@@ -514,7 +515,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "BlackDev_G0Basic.kicad_pro",
+    "filename": "PMB_G0S4V80B.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -537,6 +538,17 @@
         "via_diameter": 0.6,
         "via_drill": 0.3,
         "wire_width": 6
+      },
+      {
+        "clearance": 1.0,
+        "name": "HV",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "priority": 0,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 1.0,
+        "tuning_profile": "",
+        "via_diameter": 1.2,
+        "via_drill": 0.8
       }
     ],
     "meta": {
@@ -546,17 +558,25 @@
     "netclass_assignments": null,
     "netclass_patterns": [
       {
-        "netclass": "Default",
-        "pattern": ""
+        "netclass": "HV",
+        "pattern": "/Phase_*"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "HVDC"
       }
     ]
   },
   "pcbnew": {
     "last_paths": {
+      "gencad": "",
       "idf": "",
       "netlist": "",
       "plot": "",
+      "pos_files": "",
       "specctra_dsn": "",
+      "step": "",
+      "svg": "",
       "vrml": ""
     },
     "page_layout_descr_file": ""
@@ -629,12 +649,36 @@
           "label": "Datasheet",
           "name": "Datasheet",
           "show": true
+        },
+        {
+          "group_by": false,
+          "label": "Sim.Pins",
+          "name": "Sim.Pins",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "LCSC Part",
+          "name": "LCSC Part",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Description",
+          "name": "Description",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "#",
+          "name": "${ITEM_NUMBER}",
+          "show": false
         }
       ],
       "filter_string": "",
       "group_symbols": true,
       "include_excluded_from_bom": true,
-      "name": "Default Editing",
+      "name": "",
       "sort_asc": true,
       "sort_field": "Reference"
     },
@@ -667,25 +711,33 @@
     "meta": {
       "version": 1
     },
+    "net_format_name": "",
     "page_layout_descr_file": "",
     "plot_directory": "",
     "reuse_designators": true,
+    "space_save_all_events": true,
+    "spice_current_sheet_as_root": false,
+    "spice_external_command": "spice \"%I\"",
+    "spice_model_current_sheet_as_root": true,
+    "spice_save_all_currents": false,
+    "spice_save_all_dissipations": false,
+    "spice_save_all_voltages": false,
     "subpart_first_id": 65,
     "subpart_id_separator": 0,
     "top_level_sheets": [
       {
-        "filename": "BlackDev_G0Basic.kicad_sch",
-        "name": "BlackDev_G0Basic",
-        "uuid": "0a54fd2d-99a5-4e60-ba97-5892c84fd6a0"
+        "filename": "PMB_G0S4V80B.kicad_sch",
+        "name": "PMB_G0S4V80B",
+        "uuid": "98daacc5-ceea-4950-a399-3b6a90e46099"
       }
     ],
-    "used_designators": "U1-5,#PWR1-3,R1-12,J1-4,J6,C1-5",
+    "used_designators": "C1-4,D1,#PWR1-14,JP1-5,H1-4,J1-18",
     "variants": []
   },
   "sheets": [
     [
-      "0a54fd2d-99a5-4e60-ba97-5892c84fd6a0",
-      "BlackDev_G0Basic"
+      "98daacc5-ceea-4950-a399-3b6a90e46099",
+      "PMB_G0S4V80B"
     ]
   ],
   "text_variables": {},

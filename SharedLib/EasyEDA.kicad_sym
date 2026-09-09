@@ -3483,438 +3483,189 @@
     (on_board yes)
     (property
       "Reference"
-      "U"
+      "RJ"
       (id 0)
-      (at 0 8.89 0)
+      (at 0 10.16 0)
       (effects (font (size 1.27 1.27) ) )
     )
     (property
       "Value"
-      "EG2131_C5240691"
-      (id 1)
-      (at 0 -8.89 0)
-      (effects (font (size 1.27 1.27) ) )
-    )
-    (property
-      "Footprint"
-      "EasyEDA:SOP-8_L4.9-W3.9-P1.27-LS6.0-BL"
-      (id 2)
-      (at 0 -11.43 0)
-      (effects (font (size 1.27 1.27) ) hide)
-    )
-    (property
-      "Datasheet"
-      "https://www.lcsc.com/datasheet/C5240691.pdf"
-      (id 3)
-      (at 0 -13.97 0)
-      (effects (font (size 1.27 1.27) ) hide)
-    )
-    (property
-      "Manufacturer"
-      "EG(屹晶微)"
-      (id 4)
-      (at 0 -16.51 0)
-      (effects (font (size 1.27 1.27) ) hide)
-    )
-    (property
-      "MPN"
-      "EG2131"
-      (id 5)
-      (at 0 -19.05 0)
-      (effects (font (size 1.27 1.27) ) hide)
-    )
-    (property
-      "LCSC Part"
-      "C5240691"
-      (id 6)
-      (at 0 -21.59 0)
-      (effects (font (size 1.27 1.27) ) hide)
-    )
-    (property
-      "ki_keywords"
-      "Gate Drive ICs"
-      (id 8)
-      (at 0 -24.13 0)
-      (effects (font (size 1.27 1.27) ) hide)
-    )
-    (symbol "EG2131_C5240691_0_1"
-      (rectangle
-        (start -6.35 6.35)
-        (end 6.35 -6.35)
-        (stroke (width 0) (type default))
-        (fill (type background))
-      )
-      (circle
-        (center -5.08 5.08)
-        (radius 0.38)
-        (stroke (width 0) (type default))
-        (fill (type none))
-      )
-      (pin unspecified line
-        (at -8.89 3.81 0)
-        (length 2.54)
-        (name "VCC" (effects (font (size 1.27 1.27))))
-        (number "1" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at -8.89 1.27 0)
-        (length 2.54)
-        (name "HIN" (effects (font (size 1.27 1.27))))
-        (number "2" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at -8.89 -1.27 0)
-        (length 2.54)
-        (name "~{LIN}" (effects (font (size 1.27 1.27))))
-        (number "3" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at -8.89 -3.81 0)
-        (length 2.54)
-        (name "GND" (effects (font (size 1.27 1.27))))
-        (number "4" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at 8.89 -3.81 180)
-        (length 2.54)
-        (name "LO" (effects (font (size 1.27 1.27))))
-        (number "5" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at 8.89 -1.27 180)
-        (length 2.54)
-        (name "VS" (effects (font (size 1.27 1.27))))
-        (number "6" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at 8.89 1.27 180)
-        (length 2.54)
-        (name "HO" (effects (font (size 1.27 1.27))))
-        (number "7" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at 8.89 3.81 180)
-        (length 2.54)
-        (name "VB" (effects (font (size 1.27 1.27))))
-        (number "8" (effects (font (size 1.27 1.27))))
-      )
-    )
-  )
-
-  (symbol "TF2388M-TLH"
-    (in_bom yes)
-    (on_board yes)
-    (property
-      "Reference"
-      "U"
-      (id 0)
-      (at 0 16.51 0)
-      (effects (font (size 1.27 1.27) ) )
-    )
-    (property
-      "Value"
-      "TF2388M-TLH"
+      "R-RJ45R10P-B000"
       (id 1)
       (at 0 -16.51 0)
       (effects (font (size 1.27 1.27) ) )
     )
     (property
       "Footprint"
-      "EasyEDA:SOIC-20_L12.8-W7.5-P1.27-LS10.3-BL"
+      "EasyEDA:RJ45-TH_R-RJ45R10P-B000"
       (id 2)
       (at 0 -19.05 0)
       (effects (font (size 1.27 1.27) ) hide)
     )
     (property
       "Datasheet"
-      "https://www.lcsc.com/datasheet/C2836240.pdf"
+      "https://lcsc.com/product-detail/Ethernet-Connectors-Modular-Connectors-RJ45-RJ11_Shenzhen-Cankemeng-R-RJ45R10P-B000_C386758.html"
       (id 3)
       (at 0 -21.59 0)
       (effects (font (size 1.27 1.27) ) hide)
     )
     (property
       "Manufacturer"
-      "TFSS(德律风根)"
+      "Ckmtw(灿科盟)"
       (id 4)
       (at 0 -24.13 0)
       (effects (font (size 1.27 1.27) ) hide)
     )
     (property
       "MPN"
-      "TF2388M-TGH"
+      "R-RJ45R10P-B000"
       (id 5)
       (at 0 -26.67 0)
       (effects (font (size 1.27 1.27) ) hide)
     )
     (property
       "LCSC Part"
-      "C2836240"
+      "C386758"
       (id 6)
       (at 0 -29.21 0)
       (effects (font (size 1.27 1.27) ) hide)
     )
     (property
       "ki_keywords"
-      "Gate Drive ICs"
+      "Ethernet Connectors/Modular Connectors (RJ45 RJ11)"
       (id 8)
       (at 0 -31.75 0)
       (effects (font (size 1.27 1.27) ) hide)
     )
-    (symbol "TF2388M-TLH_0_1"
+    (symbol "R-RJ45R10P-B000_0_1"
       (rectangle
-        (start -7.62 13.97)
-        (end 7.62 -13.97)
+        (start -12.70 11.43)
+        (end 12.70 -7.62)
         (stroke (width 0) (type default))
         (fill (type background))
       )
-      (circle
-        (center -6.35 12.70)
-        (radius 0.38)
+      (polyline
+        (pts
+          (xy -4.32 5.08) (xy -4.32 6.35) (xy -4.32 6.35)
+        )
         (stroke (width 0) (type default))
         (fill (type none))
       )
+      (polyline
+        (pts
+          (xy -3.05 6.35) (xy -3.05 5.08) (xy -3.05 5.08)
+        )
+        (stroke (width 0) (type default))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy -1.78 6.35) (xy -1.78 5.08) (xy -1.78 5.08)
+        )
+        (stroke (width 0) (type default))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy -0.51 6.35) (xy -0.51 5.08) (xy -0.51 5.08)
+        )
+        (stroke (width 0) (type default))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 0.76 6.35) (xy 0.76 5.08) (xy 0.76 5.08)
+        )
+        (stroke (width 0) (type default))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 2.03 6.35) (xy 2.03 5.08) (xy 2.03 5.08)
+        )
+        (stroke (width 0) (type default))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 3.30 5.08) (xy 3.30 6.35) (xy 3.30 6.35)
+        )
+        (stroke (width 0) (type default))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 4.57 5.08) (xy 4.57 6.35) (xy 4.57 6.35)
+        )
+        (stroke (width 0) (type default))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy -5.59 6.35) (xy 5.84 6.35) (xy 5.84 -3.81) (xy 3.30 -3.81) (xy 3.30 -5.08) (xy 2.03 -5.08) (xy 2.03 -6.35) (xy -1.78 -6.35) (xy -1.78 -5.08) (xy -3.05 -5.08) (xy -3.05 -3.81) (xy -5.59 -3.81) (xy -5.59 6.35) (xy -5.59 6.35)
+        )
+        (stroke (width 0) (type default))
+        (fill (type background))
+      )
       (pin unspecified line
-        (at -10.16 11.43 0)
-        (length 2.54)
-        (name "HIN1" (effects (font (size 1.27 1.27))))
+        (at -8.89 -11.43 90)
+        (length 3.81)
+        (name "1" (effects (font (size 1.27 1.27))))
         (number "1" (effects (font (size 1.27 1.27))))
       )
       (pin unspecified line
-        (at -10.16 8.89 0)
-        (length 2.54)
-        (name "LIN1" (effects (font (size 1.27 1.27))))
+        (at -6.35 -11.43 90)
+        (length 3.81)
+        (name "2" (effects (font (size 1.27 1.27))))
         (number "2" (effects (font (size 1.27 1.27))))
       )
       (pin unspecified line
-        (at -10.16 6.35 0)
-        (length 2.54)
-        (name "HIN2" (effects (font (size 1.27 1.27))))
+        (at -3.81 -11.43 90)
+        (length 3.81)
+        (name "3" (effects (font (size 1.27 1.27))))
         (number "3" (effects (font (size 1.27 1.27))))
       )
       (pin unspecified line
-        (at -10.16 3.81 0)
-        (length 2.54)
-        (name "LIN2" (effects (font (size 1.27 1.27))))
+        (at -1.27 -11.43 90)
+        (length 3.81)
+        (name "4" (effects (font (size 1.27 1.27))))
         (number "4" (effects (font (size 1.27 1.27))))
       )
       (pin unspecified line
-        (at -10.16 1.27 0)
-        (length 2.54)
-        (name "HIN3" (effects (font (size 1.27 1.27))))
+        (at 1.27 -11.43 90)
+        (length 3.81)
+        (name "5" (effects (font (size 1.27 1.27))))
         (number "5" (effects (font (size 1.27 1.27))))
       )
       (pin unspecified line
-        (at -10.16 -1.27 0)
-        (length 2.54)
-        (name "LIN3" (effects (font (size 1.27 1.27))))
+        (at 3.81 -11.43 90)
+        (length 3.81)
+        (name "6" (effects (font (size 1.27 1.27))))
         (number "6" (effects (font (size 1.27 1.27))))
       )
       (pin unspecified line
-        (at -10.16 -3.81 0)
-        (length 2.54)
-        (name "LO3" (effects (font (size 1.27 1.27))))
+        (at 6.35 -11.43 90)
+        (length 3.81)
+        (name "7" (effects (font (size 1.27 1.27))))
         (number "7" (effects (font (size 1.27 1.27))))
       )
       (pin unspecified line
-        (at -10.16 -6.35 0)
-        (length 2.54)
-        (name "VS3" (effects (font (size 1.27 1.27))))
+        (at 8.89 -11.43 90)
+        (length 3.81)
+        (name "8" (effects (font (size 1.27 1.27))))
         (number "8" (effects (font (size 1.27 1.27))))
       )
       (pin unspecified line
-        (at -10.16 -8.89 0)
+        (at -15.24 5.08 0)
         (length 2.54)
-        (name "HO3" (effects (font (size 1.27 1.27))))
-        (number "9" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at -10.16 -11.43 0)
-        (length 2.54)
-        (name "VB3" (effects (font (size 1.27 1.27))))
+        (name "S" (effects (font (size 1.27 1.27))))
         (number "10" (effects (font (size 1.27 1.27))))
       )
       (pin unspecified line
-        (at 10.16 -11.43 180)
-        (length 2.54)
-        (name "GND" (effects (font (size 1.27 1.27))))
-        (number "11" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at 10.16 -8.89 180)
-        (length 2.54)
-        (name "VCC" (effects (font (size 1.27 1.27))))
-        (number "12" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at 10.16 -6.35 180)
-        (length 2.54)
-        (name "LO2" (effects (font (size 1.27 1.27))))
-        (number "13" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at 10.16 -3.81 180)
-        (length 2.54)
-        (name "VS2" (effects (font (size 1.27 1.27))))
-        (number "14" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at 10.16 -1.27 180)
-        (length 2.54)
-        (name "HO2" (effects (font (size 1.27 1.27))))
-        (number "15" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at 10.16 1.27 180)
-        (length 2.54)
-        (name "VB2" (effects (font (size 1.27 1.27))))
-        (number "16" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at 10.16 3.81 180)
-        (length 2.54)
-        (name "LO1" (effects (font (size 1.27 1.27))))
-        (number "17" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at 10.16 6.35 180)
-        (length 2.54)
-        (name "VS1" (effects (font (size 1.27 1.27))))
-        (number "18" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at 10.16 8.89 180)
-        (length 2.54)
-        (name "HO1" (effects (font (size 1.27 1.27))))
-        (number "19" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at 10.16 11.43 180)
-        (length 2.54)
-        (name "VB1" (effects (font (size 1.27 1.27))))
-        (number "20" (effects (font (size 1.27 1.27))))
-      )
-    )
-  )
-
-  (symbol "80N02F"
-    (in_bom yes)
-    (on_board yes)
-    (property
-      "Reference"
-      "Q"
-      (id 0)
-      (at 0 8.89 0)
-      (effects (font (size 1.27 1.27) ) )
-    )
-    (property
-      "Value"
-      "80N02F"
-      (id 1)
-      (at 0 -8.89 0)
-      (effects (font (size 1.27 1.27) ) )
-    )
-    (property
-      "Footprint"
-      "EasyEDA:PDFN-8_L6.0-W5.0-P1.27-BL-A"
-      (id 2)
-      (at 0 -11.43 0)
-      (effects (font (size 1.27 1.27) ) hide)
-    )
-    (property
-      "Datasheet"
-      "https://www.lcsc.com/datasheet/C7437081.pdf"
-      (id 3)
-      (at 0 -13.97 0)
-      (effects (font (size 1.27 1.27) ) hide)
-    )
-    (property
-      "Manufacturer"
-      "HL(富海微)"
-      (id 4)
-      (at 0 -16.51 0)
-      (effects (font (size 1.27 1.27) ) hide)
-    )
-    (property
-      "MPN"
-      "80N02F"
-      (id 5)
-      (at 0 -19.05 0)
-      (effects (font (size 1.27 1.27) ) hide)
-    )
-    (property
-      "LCSC Part"
-      "C7437081"
-      (id 6)
-      (at 0 -21.59 0)
-      (effects (font (size 1.27 1.27) ) hide)
-    )
-    (property
-      "ki_keywords"
-      "MOSFETs"
-      (id 8)
-      (at 0 -24.13 0)
-      (effects (font (size 1.27 1.27) ) hide)
-    )
-    (symbol "80N02F_0_1"
-      (rectangle
-        (start -3.81 6.35)
-        (end 3.81 -6.35)
-        (stroke (width 0) (type default))
-        (fill (type background))
-      )
-      (circle
-        (center -2.54 5.08)
-        (radius 0.38)
-        (stroke (width 0) (type default))
-        (fill (type none))
-      )
-      (pin unspecified line
-        (at -6.35 3.81 0)
+        (at 15.24 5.08 180)
         (length 2.54)
         (name "S" (effects (font (size 1.27 1.27))))
-        (number "1" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at -6.35 1.27 0)
-        (length 2.54)
-        (name "S" (effects (font (size 1.27 1.27))))
-        (number "2" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at -6.35 -1.27 0)
-        (length 2.54)
-        (name "S" (effects (font (size 1.27 1.27))))
-        (number "3" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at -6.35 -3.81 0)
-        (length 2.54)
-        (name "G" (effects (font (size 1.27 1.27))))
-        (number "4" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at 6.35 -3.81 180)
-        (length 2.54)
-        (name "D" (effects (font (size 1.27 1.27))))
-        (number "5" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at 6.35 -1.27 180)
-        (length 2.54)
-        (name "D" (effects (font (size 1.27 1.27))))
-        (number "6" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at 6.35 1.27 180)
-        (length 2.54)
-        (name "D" (effects (font (size 1.27 1.27))))
-        (number "7" (effects (font (size 1.27 1.27))))
-      )
-      (pin unspecified line
-        (at 6.35 3.81 180)
-        (length 2.54)
-        (name "D" (effects (font (size 1.27 1.27))))
-        (number "8" (effects (font (size 1.27 1.27))))
+        (number "9" (effects (font (size 1.27 1.27))))
       )
     )
   )

@@ -39,9 +39,9 @@
         "other_text_thickness": 0.15,
         "other_text_upright": false,
         "pads": {
-          "drill": 0.0,
-          "height": 1.0,
-          "width": 2.51
+          "drill": 3.2,
+          "height": 7.0,
+          "width": 7.0
         },
         "silk_line_width": 0.1,
         "silk_text_italic": false,
@@ -60,10 +60,10 @@
           "hatch_smoothing_level": 0,
           "hatch_smoothing_value": 0.1,
           "hatch_thickness": 1.0,
-          "min_clearance": 0.5,
+          "min_clearance": 1.0,
           "min_island_area": 10.0,
           "min_thickness": 0.25,
-          "pad_connection": 2,
+          "pad_connection": 1,
           "remove_islands": 0,
           "thermal_relief_gap": 0.5,
           "thermal_relief_spoke_width": 0.8
@@ -475,6 +475,7 @@
       "footprint_filter": "ignore",
       "footprint_link_issues": "warning",
       "four_way_junction": "ignore",
+      "global_label_dangling": "warning",
       "ground_pin_not_ground": "warning",
       "hier_label_mismatch": "error",
       "isolated_pin_label": "warning",
@@ -510,11 +511,15 @@
     }
   },
   "libraries": {
-    "pinned_footprint_libs": [],
-    "pinned_symbol_libs": []
+    "pinned_footprint_libs": [
+      "Libmain"
+    ],
+    "pinned_symbol_libs": [
+      "libmain"
+    ]
   },
   "meta": {
-    "filename": "BlackDev_G0Basic.kicad_pro",
+    "filename": "PSU_G0V48P15R.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -553,10 +558,14 @@
   },
   "pcbnew": {
     "last_paths": {
+      "gencad": "",
       "idf": "",
       "netlist": "",
       "plot": "",
+      "pos_files": "",
       "specctra_dsn": "",
+      "step": "HALF_BRIDGE_MODULE.step",
+      "svg": "",
       "vrml": ""
     },
     "page_layout_descr_file": ""
@@ -667,25 +676,41 @@
     "meta": {
       "version": 1
     },
+    "net_format_name": "",
+    "ngspice": {
+      "fix_include_paths": true,
+      "meta": {
+        "version": 0
+      },
+      "model_mode": 4,
+      "workbook_filename": ""
+    },
     "page_layout_descr_file": "",
     "plot_directory": "",
     "reuse_designators": true,
+    "space_save_all_events": true,
+    "spice_current_sheet_as_root": false,
+    "spice_external_command": "spice \"%I\"",
+    "spice_model_current_sheet_as_root": true,
+    "spice_save_all_currents": false,
+    "spice_save_all_dissipations": false,
+    "spice_save_all_voltages": false,
     "subpart_first_id": 65,
     "subpart_id_separator": 0,
     "top_level_sheets": [
       {
-        "filename": "BlackDev_G0Basic.kicad_sch",
-        "name": "BlackDev_G0Basic",
-        "uuid": "0a54fd2d-99a5-4e60-ba97-5892c84fd6a0"
+        "filename": "PSU_G0V48P15R.kicad_sch",
+        "name": "PSU_G0V48P15R",
+        "uuid": "1a6c144a-7454-4471-b4a5-7e9f7815fcbd"
       }
     ],
-    "used_designators": "U1-5,#PWR1-3,R1-12,J1-4,J6,C1-5",
+    "used_designators": "J1-4,R1-23,R27-29,D1-8,T1,#PWR1-28,#PWR31-35,#PWR63-65,C1-13,C21,Q1-2,H1-7,U1-5,JP1-2,L1-2",
     "variants": []
   },
   "sheets": [
     [
-      "0a54fd2d-99a5-4e60-ba97-5892c84fd6a0",
-      "BlackDev_G0Basic"
+      "1a6c144a-7454-4471-b4a5-7e9f7815fcbd",
+      "PSU_G0V48P15R"
     ]
   ],
   "text_variables": {},
