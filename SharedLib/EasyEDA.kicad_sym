@@ -3478,7 +3478,7 @@
     )
   )
 
-  (symbol "R-RJ45R10P-B000"
+  (symbol "EG2131_C5240691"
     (in_bom yes)
     (on_board yes)
     (property
