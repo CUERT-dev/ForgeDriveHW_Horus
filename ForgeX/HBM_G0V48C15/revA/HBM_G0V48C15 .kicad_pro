@@ -40,8 +40,8 @@
         "other_text_upright": false,
         "pads": {
           "drill": 0.0,
-          "height": 1.8,
-          "width": 1.325
+          "height": 0.6,
+          "width": 1.95
         },
         "silk_line_width": 0.1,
         "silk_text_italic": false,
@@ -60,7 +60,7 @@
           "hatch_smoothing_level": 0,
           "hatch_smoothing_value": 0.1,
           "hatch_thickness": 1.0,
-          "min_clearance": 0.6,
+          "min_clearance": 1.0,
           "min_island_area": 10.0,
           "min_thickness": 1.0,
           "pad_connection": 2,
@@ -162,7 +162,7 @@
         "min_track_width": 0.25,
         "min_via_annular_width": 0.25,
         "min_via_diameter": 0.5,
-        "solder_mask_to_copper_clearance": 0.0,
+        "solder_mask_to_copper_clearance": 0.005,
         "use_height_for_length_calcs": true
       },
       "teardrop_options": [
@@ -708,7 +708,7 @@
         "uuid": "1a6c144a-7454-4471-b4a5-7e9f7815fcbd"
       }
     ],
-    "used_designators": "J1-4,R2-3,R6-10,R14-20,R27-29,D1-5,#PWR1-4,#PWR6-10,#PWR12-15,#PWR17-21,#PWR31-35,#PWR63-65,C1,C4-5,C10-13,C21,Q1-2,H1-7,U1-3,JP1-2",
+    "used_designators": "J1-4,R1-3,R6-10,R14-20,R27-30,D1-6,#PWR1-4,#PWR6-10,#PWR12-15,#PWR17-22,#PWR31-35,#PWR63-65,C1,C4-6,C10-14,C21,Q1-2,H1-7,U1-3,JP1-2",
     "variants": []
   },
   "sheets": [
