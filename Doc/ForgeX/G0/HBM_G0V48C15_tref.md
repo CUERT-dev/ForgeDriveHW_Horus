@@ -148,7 +148,7 @@ Requirements are what the HBM itself is supposed to achieve:
 - 15 A class power handling
 - Efficient switching operation from 8–20 kHz with manageable conduction and switching losses
 - Controlled switch-node ringing and voltage overshoot within component and system limits
-- Current measurement bandwidth of at least 40 kHz
+- Current measurement bandwidth targeted at approximately 1–1.2 kHz
 - Robust operation in the presence of switching noise and transients
 - Controlled conducted and radiated EMI to minimize interference with other system components
 
@@ -245,14 +245,11 @@ The selected gate-driver IC for the HBM is the `EG2131` from EG Micro.
 The external components of the gate-drive circuit were selected based on the required switching speed, gate-drive current, bootstrap supply requirements, and supply decoupling.
 
 ### 5.3.1 Gate Resistor
+The external gate resistor is treated as a design variable used to establish the required switching speed
+while providing a practical compromise between switching losses, switch-node `dv/dt`,
+voltage overshoot, ringing, and electromagnetic interference.
 
-The external gate resistor was selected to establish the initial
-switching-speed target while providing a practical compromise between
-switching losses, switch-node `dv/dt`, voltage overshoot, ringing, and
-electromagnetic interference.
-
-For the HGN036N08S, the datasheet specifies the switching-time
-characteristics using an external gate resistance of:
+For the HGN036N08S, the datasheet specifies an external gate resistance of:
 
 $$
 R_{G,EXT}=10\,\Omega
@@ -263,6 +260,14 @@ under the test conditions:
 $$
 V_{DD}=40\,V,\qquad I_D=20\,A,\qquad V_{GS}=10\,V
 $$
+
+The 10 Ω value is a **datasheet test condition rather than a recommended final design value**.
+ It defines the external gate-drive condition used by the manufacturer to characterize
+  the MOSFET's switching behavior and identify its switching characteristics.
+
+Therefore, the switching times obtained under this test condition cannot be directly transferred to the HBM design. 
+The actual switching time depends on the selected gate driver, gate-drive voltage, total gate resistance, MOSFET gate characteristics,
+ operating current and voltage, temperature, and PCB parasitics.
 
 The same datasheet specifies a total gate charge of:
 
@@ -276,49 +281,35 @@ $$
 Q_{GD}=18\,nC
 $$
 
-The 10 Ω value is therefore used as the initial external gate-resistor
-value for the HBM design. The final value shall be verified through
-switching simulation and hardware measurements.
-
 **First-Order Switching Loss Estimate**
 
-For the HBM operating point, a first-order estimate of the voltage-current
-overlap switching loss of a single MOSFET is:
+For the HBM operating point, a first-order estimate of the voltage-current overlap switching loss of a single MOSFET is:
 
 $$
-P_{SW}
-\approx
-\frac{1}{2}V_{DS}I_D(t_{on}+t_{off})f_{SW}
+P_{SW}\approx\frac{1}{2}V_{DS}I_D(t_{on}+t_{off})f_{SW}
 $$
 
-For a 48 V DC-link, 15 A operating current, and 20 kHz switching
-frequency, using an initial target of approximately 100 ns turn-on and
-80 ns turn-off:
+For a 48 V DC-link, 15 A operating current, and 20 kHz switching frequency, initial switching-time targets of approximately 100 ns turn-on and 80 ns turn-off are used only as preliminary design targets:
 
 $$
-P_{SW}
-\approx
-\frac{1}{2}
-\times48
-\times15
-\times(100+80)
-\times10^{-9}
-\times20\times10^3
+P_{SW}\approx
+\frac{1}{2}\times48\times15\times(100+80)
+\times10^{-9}\times20\times10^3
 $$
 
 $$
 P_{SW}\approx1.296\,W
 $$
 
-This is a first-order estimate of the voltage-current overlap loss only.
-It does not include output-capacitance energy, body-diode reverse-recovery
-losses, gate-drive losses, or additional losses caused by switch-node
-ringing.
+This value is a first-order estimate of the voltage-current overlap loss only. It does not include output-capacitance energy, body-diode reverse-recovery losses, gate-drive losses, or additional losses caused by switch-node ringing.
+
+The 100 ns and 80 ns values are **initial design targets and are not taken from the MOSFET datasheet**. They are used to establish an initial switching-speed target for the HBM. The final switching times shall be obtained from switching simulation and hardware measurements after selecting the actual gate resistance.
+
+If the final gate resistance produces substantially faster or slower switching, the switching losses, `dv/dt`, `di/dt`, and parasitic-inductance voltage shall all be recalculated using the validated switching times.
 
 **Gate Current and Gate Resistor**
 
-The gate current required during the Miller transition can be estimated
-from the MOSFET gate-to-drain charge:
+The required gate current during the Miller transition can be estimated from:
 
 $$
 I_G\approx\frac{Q_{GD}}{t_{Miller}}
@@ -335,142 +326,93 @@ $$
 For an initial target Miller transition time of approximately 100 ns:
 
 $$
-I_{G,on}
-=
-\frac{Q_{GD}}{t_{on}}
-$$
-
-$$
-I_{G,on}
-=
+I_{G,on}=
 \frac{18\,nC}{100\,ns}
-=
-180\,mA
+=180\,mA
 $$
 
-The EG2131 provides a specified gate-drive source current capability
-$I_{O+}$ of approximately 1.0 A. Therefore, the calculated 180 mA Miller current is
-well within the driver's source-current capability.
+The EG2131 provides a specified gate-drive source current capability of approximately 1.0 A. Therefore, the estimated Miller current is within the driver's specified source-current capability.
 
 **Turn-Off**
 
 For an initial target turn-off transition of approximately 80 ns:
 
 $$
-I_{G,off}
-=
-\frac{Q_{GD}}{t_{off}}
-$$
-
-$$
-I_{G,off}
-=
+I_{G,off}=
 \frac{18\,nC}{80\,ns}
-=
-225\,mA
+=225\,mA
 $$
 
-The EG2131 provides a specified gate-drive sink current capability
-$I_{O-}$ of approximately 1.5 A. Therefore, the calculated 225 mA Miller current is
-also well within the driver's sink-current capability.
-
-The gate-current calculations confirm that the selected switching-speed
-targets do not require gate currents approaching the EG2131's specified
-source or sink capability.
+The EG2131 provides a specified gate-drive sink current capability of approximately 1.5 A, which is also sufficient for the calculated initial gate-current target.
 
 **Gate Resistor Selection**
 
-The HGN036N08S datasheet uses a 10 Ω external gate resistance for its
-specified switching-time test condition. This value is therefore adopted
-as the initial external gate-resistor value:
+The 10 Ω resistance specified in the HGN036N08S datasheet is therefore used only as a reference for the manufacturer's switching characterization and as an indicator of the MOSFET's switching behavior. It is not directly adopted as the final HBM gate-resistor value.
+
+The external gate resistor is selected according to the required switching speed and gate-drive current. In first-order form:
 
 $$
-\boxed{R_{GateExternal}=10\,\Omega}
+I_G\approx
+\frac{V_{DRV}-V_{PL}}
+{R_{G,EXT}+R_{G,int}+R_{DRV}}
 $$
 
-The resistor provides additional impedance in the gate-drive loop,
-limiting the peak gate current and reducing the tendency for excessive
-ringing and high switch-node `dv/dt`.
+where $V_{DRV}$ is the gate-drive voltage, $V_{PL}$ is the Miller plateau voltage, $R_{G,int}$ is the MOSFET internal gate resistance, and $R_{DRV}$ represents the effective driver output resistance.
 
-The actual gate-current waveform is determined by the EG2131 output
-stage, MOSFET internal gate resistance, Miller plateau voltage, external
-gate resistance, and PCB parasitic inductance. Since the EG2131
-datasheet specifies the driver current capability (1.0 A source / 1.5 A sink) but does not provide
-a directly equivalent fixed output resistance for use in a simple
-resistive calculation, the final resistor value is not derived from an
-assumed driver resistance.
+A lower external gate resistance generally produces faster switching and lower voltage-current overlap losses, but increases `dv/dt`, `di/dt`, ringing, voltage overshoot, and EMI. A higher resistance reduces these transient stresses at the expense of increased switching losses.
 
-The 10 Ω value is therefore treated as the initial design value based
-on the HGN036N08S datasheet switching test condition. Separate turn-on
-and turn-off resistors may be introduced later if measurements indicate
-that asymmetric switching control is required.
+Consequently, the final gate-resistor value shall be determined through switching simulation and hardware measurements rather than directly copied from the MOSFET datasheet test circuit. Separate turn-on and turn-off resistors may also be used if asymmetric switching control is required.
 
 **`dv/dt` Constraints**
 
-The selected switching speed shall be evaluated against the principal
-`dv/dt` constraints associated with the MOSFET, gate driver, and
-half-bridge configuration.
+The selected switching speed shall be evaluated against the principal `dv/dt` constraints associated with the MOSFET, gate driver, and half-bridge configuration.
 
 **Miller-Induced False Turn-On**
 
-When the complementary MOSFET switches, the switch-node `dv/dt` couples
-through the gate-drain capacitance of the MOSFET that is in the OFF state.
+When the complementary MOSFET switches, the switch-node `dv/dt` couples through the gate-drain capacitance of the MOSFET that is in the OFF state.
 
 The resulting Miller current can be approximated by:
 
 $$
-I_{Miller}
-=
-C_{GD}(V_{DS})
-\frac{dV_{DS}}{dt}
+I_{Miller}=C_{GD}(V_{DS})\frac{dV_{DS}}{dt}
 $$
 
-The actual false-turn-on behavior depends on the nonlinear
-$C_{GD}(V_{DS})$ characteristic, MOSFET threshold voltage, gate-loop
-impedance, temperature, and PCB parasitic inductances.
+A faster switching transition increases `dv/dt` and consequently the Miller current, increasing the possibility of false turn-on. The actual behavior depends on the nonlinear $C_{GD}(V_{DS})$ characteristic, gate-loop impedance, temperature, and PCB parasitics.
 
-The HGN036N08S datasheet specifies enhanced body-diode `dv/dt`
-capability as a device feature. The intended switch-node slew rate shall
-nevertheless be verified experimentally to ensure adequate margin
-against false turn-on and excessive ringing.
+The intended switch-node slew rate shall therefore be verified through simulation and experimental measurements.
 
 **Gate-Driver `dv/dt` Capability**
 
-The EG2131 is specified as a half-bridge high-side/low-side gate driver
-with a high-side floating supply capability of up to 300 V and gate-drive
-output capability of approximately 1.0 A source and 1.5 A sink.
+The EG2131 is specified as a half-bridge high-side/low-side gate driver with a high-side floating supply capability of up to 300 V and gate-drive output capability of approximately 1.0 A source and 1.5 A sink.
 
-The EG2131 also includes internal dead-time control with a specified
-typical dead time of approximately 250 ns ($DT_{typ}=250\,ns$).
+The EG2131 also includes internal dead-time control with a typical dead time of approximately 250 ns:
 
-No separate numerical `dv/dt` immunity limit is assumed here because
-such a value has not been established from the selected EG2131
-datasheet data used for this design.
+$$
+DT_{typ}=250\,ns
+$$
+
+No separate numerical `dv/dt` immunity limit is assumed here because such a value has not been established from the selected EG2131 datasheet data.
 
 **`di/dt` and Parasitic-Inductance Voltage**
 
-The current slew rate through parasitic inductance generates an
-additional voltage according to:
+The current slew rate through parasitic inductance generates an additional voltage according to:
 
 $$
 V_L=L_{par}\frac{di}{dt}
 $$
 
-For a 15 A current transition occurring over approximately 100 ns:
+For an initial 15 A current transition occurring over approximately 100 ns:
 
 $$
-\frac{di}{dt}
-\approx
+\frac{di}{dt}\approx
 \frac{15\,A}{100\,ns}
-=
-0.15\,A/ns
+=0.15\,A/ns
 $$
 
 For an illustrative switching-loop inductance of 20 nH:
 
 $$
-V_{L,Power}
-\approx
+V_{L,Power}\approx
 20\,nH\times0.15\,A/ns
 \approx3.0\,V
 $$
@@ -478,8 +420,7 @@ $$
 If a source inductance of 7 nH is considered:
 
 $$
-V_{L,Source}
-=
+V_{L,Source}=
 7\,nH\times0.15\,A/ns
 \approx1.05\,V
 $$
@@ -488,350 +429,468 @@ The combined first-order inductive voltage contribution is therefore:
 
 $$
 \boxed{
-V_{L,Total}
-\approx
+V_{L,Total}\approx
 3.0\,V+1.05\,V
 \approx4.05\,V
 }
 $$
 
-These inductance values are illustrative design assumptions and shall be
-replaced by extracted or measured PCB parasitic values when the final
-layout is available.
+These inductance values are illustrative design assumptions and shall be replaced by extracted or measured PCB parasitic values when the final layout is available.
 
-The calculated inductive voltage represents only the voltage generated by
-the assumed current slew. It does not account for resonant ringing,
-parasitic capacitances, diode reverse recovery, or other transient
-mechanisms.
+The calculated inductive voltage is directly dependent on the actual switching time. For example, reducing the switching time substantially increases `di/dt` and therefore increases the voltage generated across the parasitic inductance.
 
-The final gate-resistor value and switching performance shall therefore be
-validated through simulation and hardware testing under the target
-48 V / 15 A operating conditions.
+Accordingly, the final calculations for `di/dt`, parasitic-inductance voltage, and switching losses shall use the validated turn-on and turn-off switching times obtained with the final gate-resistor network.
 
-#### 5.3.2 Bootstrap Capacitor
+The final gate-resistor value and switching performance shall therefore be validated through simulation and hardware testing under the target 48 V / 15 A operating conditions.
 
-The bootstrap capacitor provides the local energy reservoir and low-impedance current path required to drive the high-side MOSFET. In the `EG2131` implementation, the high-side floating supply is generated using an external bootstrap diode and bootstrap capacitor connected between `VB` and `VS`. During the low-side conduction interval, the bootstrap capacitor is recharged from the `VCC` supply. When the high-side MOSFET is commanded on, the stored charge provides the floating supply required by the high-side gate driver.
+### 5.3.2 Bootstrap Capacitor
+The bootstrap capacitor provides the local energy reservoir required to drive the high-side MOSFET. In the `EG2131` implementation, the high-side floating supply is generated using an external bootstrap diode and bootstrap capacitor connected between `VB` and `VS`. During the low-side conduction interval, the bootstrap capacitor is recharged from the `VCC` supply.
 
-The bootstrap capacitor must therefore be sufficiently large to limit the voltage drop caused by MOSFET gate charge and the additional charge consumed by the gate-driver circuitry.
+The bootstrap capacitor must be sufficiently large to limit the voltage drop caused by the MOSFET gate charge and the charge consumed by the high-side gate-driver circuitry.
 
-A first-order estimate can be obtained from the MOSFET total gate charge:
+A first-order estimate of the voltage drop due to the MOSFET gate charge is:
 
 $$
-\Delta V_{BOOT} = \frac{\Delta Q}{C_{BOOT}}
+\Delta V_{BOOT}=\frac{\Delta Q}{C_{BOOT}}
 $$
 
-For the selected `HGN036N08S`, the total gate charge is approximately:
+For the selected HGN036N08S:
 
 $$
-Q_G \approx 61\,\mathrm{nC}
+Q_G\approx61\,nC
 $$
 
-Using a preliminary target gate-drive voltage of:
+Using a preliminary bootstrap capacitance of:
 
 $$
-V_{GS} \approx 12\,\mathrm{V}
+C_{BOOT}=1\,\mu F
 $$
 
-the equivalent charge-based gate capacitance can be estimated as:
+the voltage drop due to one MOSFET gate-charge event is approximately:
 
 $$
-C_G \approx \frac{Q_G}{V_{GS}}
+\Delta V_{BOOT}\approx
+\frac{61\,nC}{1\,\mu F}
+\approx61\,mV
+$$
+
+This represents only the MOSFET gate-charge contribution. The actual bootstrap-voltage droop will be higher because the gate driver also consumes charge and because of losses in the bootstrap diode and capacitor.
+
+The selected bootstrap capacitor is therefore:
+
+$$
+\boxed{C_{BOOT}=1\,\mu F}
+$$
+
+The 1 µF value provides substantial charge reserve and keeps the gate-charge-induced voltage variation small. The final value shall be verified considering the gate-driver quiescent and switching current, maximum high-side on-time, bootstrap-diode characteristics, capacitor tolerance, temperature, and allowable bootstrap-voltage ripple.
+
+The selected value should therefore be understood as a preliminary hold-up and robustness choice rather than a datasheet-mandated minimum. Final validation shall confirm that the bootstrap voltage remains within the required operating range at the maximum intended duty cycle and switching conditions.
+
+### 5.3.3 VCC Decoupling Capacitor
+The gate-driver supply requires local decoupling to provide the high-frequency current demanded by the gate-drive output stage and to minimize voltage sag and supply-loop inductance during switching transitions.
+
+The `EG2131` datasheet specifies a high-frequency 0.1 µF bypass capacitor between `VCC` and `GND`. A larger local capacitor is also used to provide additional bulk energy storage.
+
+For the selected HBM implementation, a 10 µF capacitor is used together with a 0.1 µF ceramic bypass capacitor in parallel:
+
+$$
+\boxed{C_{VCC}=10\,\mu F}
+$$
+
+$$
+\boxed{C_{HF}=0.1\,\mu F}
+$$
+
+The 10 µF capacitor provides local bulk energy storage, while the 0.1 µF ceramic capacitor provides a low-impedance path for high-frequency current components during gate-drive transitions.
+
+Both capacitors should be placed directly adjacent to the `EG2131` `VCC` and `GND` pins using short and wide PCB connections to minimize parasitic inductance.
+
+The `EG2131` VCC supply operates within:
+
+$$
+11\,V\leq V_{CC}\leq20\,V
+$$
+
+Therefore, the selected capacitors shall be appropriately rated for the actual VCC supply voltage and operating conditions.
+
+The final decoupling network shall be verified through switching simulation and hardware testing to ensure stable driver-supply voltage during high-current switching transitions.
+
+### 5.3.4 RC Snubber
+A first-pass RC snubber was estimated to damp the high-frequency switch-node resonance associated with the switching-loop inductance and MOSFET output capacitance.
+
+Using an estimated switching-loop inductance of:
+
+$$
+L_0=20\,nH
+$$
+
+and MOSFET output capacitance:
+
+$$
+C_{oss}\approx565\,pF
+$$
+
+an initial snubber capacitance can be selected as approximately four times the MOSFET output capacitance:
+
+$$
+C_{snub}\approx4C_{oss}
+$$
+
+$$
+C_{snub}\approx
+4\times565\,pF
+\approx2.26\,nF
+$$
+
+The damping resistance can be estimated from the characteristic impedance of the parasitic LC network:
+
+$$
+R_{snub}\approx
+\sqrt{\frac{L_0}{C_{oss}}}
 $$
 
 Therefore:
 
 $$
-C_G
-\approx
-\frac{61\,\mathrm{nC}}{12\,\mathrm{V}}
-\approx
-5.08\,\mathrm{nF}
+R_{snub}\approx
+\sqrt{\frac{20\,nH}{565\,pF}}
+\approx5.95\,\Omega
 $$
 
-Using a simple 10× design rule gives:
+Standard nominal values are therefore selected as:
 
 $$
-C_{BOOT} \geq 10C_G
-$$
-
-and therefore:
-
-$$
-C_{BOOT} \geq 50.8\,\mathrm{nF}
-$$
-
-This value is only a first-order lower-bound estimate. The actual bootstrap capacitor must also account for the gate-driver current consumption, MOSFET gate charge, bootstrap-diode voltage drop, capacitor tolerance, temperature and DC-bias effects, maximum high-side on-time, and the allowable bootstrap-voltage ripple.
-
-A **1 µF** bootstrap capacitor was selected as a preliminary design value for the HBM.
-
-**Justification:**
-
-The larger capacitor was selected to provide substantial charge reserve and reduce bootstrap-voltage variation during high-side operation rather than operating close to the theoretical minimum capacitance.
-
-Considering only the MOSFET gate-charge contribution, the voltage drop associated with one complete gate-charge event is:
-
-$$
-\Delta V_{BOOT}
-\approx
-\frac{61\,\mathrm{nC}}{1\,\mathrm{\mu F}}
-\approx
-61\,\mathrm{mV}
-$$
-
-This represents only a small fraction of the available bootstrap supply voltage. The actual bootstrap-voltage reduction will be higher because the high-side driver also consumes charge during operation; therefore, the 61 mV value should be treated as a gate-charge-only estimate rather than the total expected bootstrap droop.
-
-The selected capacitance also provides a substantial margin relative to the first-order 10× estimate:
-
-$$
-\frac{1\,\mathrm{\mu F}}{50.8\,\mathrm{nF}}
-\approx
-19.7
-$$
-
-Thus, the selected capacitor is approximately 20 times larger than the calculated 10× lower-bound value.
-
-The principal trade-off of the larger capacitance is the increased charge required during the initial bootstrap charging interval. The actual charging behavior depends on the external bootstrap diode, its forward voltage and dynamic resistance, the `VCC` supply, PCB resistance, and the capacitor characteristics. Consequently, no fixed bootstrap charging-time value is assumed without the final charging-path parameters.
-
-The `EG2131` datasheet specifies an external bootstrap diode and bootstrap capacitor for the high-side floating supply. The final bootstrap capacitor and diode selection should therefore be verified together with the complete switching waveform and the maximum intended high-side on-time.
-
-The selected **1 µF** value should consequently be understood as a **preliminary hold-up and robustness choice**, rather than as a datasheet-mandated minimum value. Final validation should confirm the bootstrap voltage remains within the required operating range under the maximum intended duty cycle, switching frequency, temperature, and transient operating conditions.
-
-#### 5.3.3 VCC Decoupling Capacitor
-
-The gate-driver supply requires local decoupling to provide the high-frequency current demanded by the gate-drive output stage and to minimize voltage sag, supply-loop inductance, and voltage transients during switching transitions.
-
-The `EG2131` datasheet specifies a high-frequency **0.1 µF bypass capacitor** connected between `VCC` and `GND` to reduce high-frequency noise at the driver supply input. The typical application circuit additionally shows a **10 µF** capacitor connected across the VCC supply.
-
-For the selected HBM implementation, a **10 µF** local VCC decoupling capacitor is therefore selected, together with a **0.1 µF high-frequency ceramic bypass capacitor** placed in parallel.
-
-The 10 µF capacitor provides local bulk energy storage for the gate-driver supply, while the 0.1 µF ceramic capacitor provides a low-impedance path for the high-frequency current components generated during gate-drive transitions.
-
-The selected VCC decoupling network is therefore:
-
-$$
-\boxed{C_{VCC}=10\,\mathrm{\mu F}}
-$$
-
-with:
-
-$$
-\boxed{C_{HF}=0.1\,\mathrm{\mu F}}
-$$
-
-The capacitors should be placed directly adjacent to the `EG2131` `VCC` and `GND` pins, with short and wide PCB connections to minimize the associated loop area and parasitic inductance.
-
-The `EG2131` VCC supply operates within the specified range of:
-
-$$
-11\,\mathrm{V}\leq V_{CC}\leq20\,\mathrm{V}
-$$
-
-and the selected decoupling network should therefore be rated appropriately for the actual VCC supply voltage and expected operating conditions.
-
-The selected VCC decoupling network provides both local energy storage and high-frequency bypassing, helping to maintain a stable gate-driver supply and reduce supply-voltage transients during high-current switching transitions.
-
-#### 5.3.4 RC Snubber
-
-A first-pass RC snubber value was estimated from the effective switching-loop 
-inductance ($L_0 = 20\,\mathrm{nH}$) and the MOSFET parasitic output capacitance ($C_{oss} \approx 565\,\mathrm{pF}$). 
-
-The initial capacitance is chosen as approximately four times $C_{oss}$ to effectively damp the resonance:
-
-$$
-C_{snub} \approx 4 \times C_{oss} \approx 4 \times 565\,\mathrm{pF} \approx 2.26\,\mathrm{nF}
-$$
-
-The damping resistor is matched to the characteristic impedance of the parasitic LC tank formed by $L_0$ and $C_{oss}$:
-
-$$
-R_{snub} \approx \sqrt{\frac{L_0}{C_{oss}}} = \sqrt{\frac{20\,\mathrm{nH}}{565\,\mathrm{pF}}} \approx 5.95\,\Omega
-$$
-
-Using these parameters, the initial RC snubber network values are selected as:
-
-$$
-\boxed{C_{snub} = 2.2\,\mathrm{nF}}
+\boxed{C_{snub}=2.2\,nF}
 $$
 
 $$
-\boxed{R_{snub} = 6.2\,\Omega}
+\boxed{R_{snub}=6.2\,\Omega}
 $$
 
-where $L_0 = 20\,\mathrm{nH}$ represents the estimated high-frequency switching-loop inductance, including relevant MOSFET package and interconnect inductances. Standard nominal E24 resistor and capacitor values ($2.2\,\mathrm{nF}$ and $6.2\,\Omega$) were selected for practical implementation.
-
-The average power dissipation in the snubber resistor can be estimated as:
+The average power dissipated by the snubber resistor can be estimated as:
 
 $$
-P_{snub} \approx C_{snub} \times V_{DS}^2 \times f_{SW} = 2.2\,\mathrm{nF} \times (48\,\mathrm{V})^2 \times 20\,\mathrm{kHz} \approx 0.101\,\mathrm{W}
+P_{snub}\approx
+C_{snub}V_{DS}^{2}f_{SW}
 $$
 
-These values provide an initial damping network for the switch-node LC resonance. The final snubber values and resistor power ratings shall be verified experimentally or through switching-waveform simulation by evaluating the resulting overshoot, ringing, switching losses, and snubber power dissipation under full load conditions.
+For a 48 V DC-link and 20 kHz switching frequency:
 
-#### 5.4 Current Sensing
+$$
+P_{snub}\approx
+2.2\,nF\times(48\,V)^2\times20\,kHz
+\approx0.101\,W
+$$
 
-Since galvanic isolation between the power and logic domains provides inherent noise immunity and protects the microcontroller, a Hall-effect-based current sensor is employed for phase-current monitoring.
+These values represent an initial damping network based on estimated parasitic parameters. The final snubber values shall be optimized using switching-waveform simulation and hardware measurements by evaluating voltage overshoot, ringing, switching losses, and snubber power dissipation under the target operating conditions.
+
+### 5.4 Current Sensing
+A Hall-effect-based current sensor is employed for phase-current monitoring. The use of a Hall-effect sensor provides galvanic isolation between the current-conduction path and the signal circuitry while allowing bidirectional current measurement.
 
 The **ACS712** fully integrated Hall-effect current sensor IC from Allegro MicroSystems is selected for this function.
 
 **Datasheet:** [ACS712 Datasheet](https://www.sparkfun.com/datasheets/Breakouts/ACS712-datasheet.pdf)
 
-**Selection Rationale:**
+**Selection Rationale**
 
-* **Galvanic Isolation:** Integrated copper conduction path provides up to $2.1\,\mathrm{kV_{RMS}}$ galvanic isolation, fully decoupling the high-power switching node from the low-voltage control domain.
-* **Low Internal Resistance:** The internal conductor resistance is typically $1.2\,\mathrm{m\Omega}$, minimizing conduction losses and thermal dissipation compared to traditional shunt topologies.
-* **Bidirectional Sensing Capability:** Naturally biased at $V_{CC} / 2$, allowing seamless measurement of both positive and negative AC/phase current swings.
-* **Precise Proportional Output:** Generates an analog voltage output directly proportional to the AC or DC sensed current.
+* **Galvanic Isolation:** The integrated copper conduction path provides up to $2.1,\mathrm{kV_{RMS}}$ galvanic isolation between the sensed current path and the signal circuitry.
+* **Low Internal Resistance:** The internal conductor resistance is approximately $1.2,\mathrm{m\Omega}$, resulting in low conduction loss.
+* **Bidirectional Sensing:** The output is biased around $V_{CC}/2$, allowing measurement of both positive and negative phase current.
+* **Analog Proportional Output:** The output voltage is proportional to the sensed current.
 
 **Sensitivity and Output Characteristics**
 
-The ACS712 features an internal zero-current output voltage set to half of its supply voltage:
+The zero-current output voltage is approximately:
 
 $$
-V_{OUT(Q)} = \frac{V_{CC}}{2}
+V_{OUT(Q)}=\frac{V_{CC}}{2}
 $$
 
-Operating from a $5.0\,\mathrm{V}$ rail ($V_{CC} = 5.0\,\mathrm{V}$), the quiescent output voltage at $0\,\mathrm{A}$ is:
+For:
 
 $$
-V_{bias} = 2.5\,\mathrm{V}
+V_{CC}=5.0\,V
 $$
 
-For the target operating conditions, the **ACS712-20A** variant is selected. The nominal sensitivity for this model is:
+the nominal zero-current output is:
 
 $$
-\text{Sensitivity} = 100\,\mathrm{mV/A}
+V_{bias}=2.5\,V
 $$
 
-The overall current-to-voltage transfer function is given by:
+For the target operating conditions, the **ACS712-20A** variant is selected. Its nominal sensitivity is:
 
 $$
-V_{OUT} = \left(I \times \text{Sensitivity}\right) + V_{bias}
+\boxed{\text{Sensitivity}=100\,\mathrm{mV/A}}
 $$
 
-$$
-V_{OUT} = \left(I \times 0.100\,\mathrm{V/A}\right) + 2.5\,\mathrm{V}
-$$
-
-Thus, the current-sensing path sensitivity is:
+The current-to-voltage transfer function is:
 
 $$
-\boxed{\text{Sensitivity} = 0.100\,\mathrm{V/A}}
+V_{OUT}=
+\left(I\times0.100\,\mathrm{V/A}\right)+2.5\,V
 $$
 
 **Measurement Range and ADC Interface**
 
-For the ACS712-20A, the theoretical bidirectional measurement range is $\pm 20\,\mathrm{A}$. Over the full $5.0\,\mathrm{V}$ supply rail, the output voltage swing is:
+The nominal bidirectional measurement range is:
 
 $$
-V_{OUT,max} = +20\,\mathrm{A} \times 0.100\,\mathrm{V/A} + 2.5\,\mathrm{V} = 4.5\,\mathrm{V}
+\boxed{I_{range}=\pm20\,A}
 $$
 
-$$
-V_{OUT,min} = -20\,\mathrm{A} \times 0.100\,\mathrm{V/A} + 2.5\,\mathrm{V} = 0.5\,\mathrm{V}
-$$
+The corresponding output voltages are:
 
 $$
-\boxed{I_{range} = \pm 20\,\mathrm{A}}
-$$
-
-**ADC Attenuation Network ($3.3\,\mathrm{V}$ Domain)**
-
-Because the ACS712 produces an output up to $4.5\,\mathrm{V}$ (exceeding the $3.3\,\mathrm{V}$ ADC limit), a precision resistor divider is placed at the output to scale the voltage swing down to a safe range ($0.33\,\mathrm{V} \to 2.97\,\mathrm{V}$):
-
-$$
-\text{Scale Factor} = \frac{R_2}{R_1 + R_2} = \frac{20\,\mathrm{k\Omega}}{10\,\mathrm{k\Omega} + 20\,\mathrm{k\Omega}} = \frac{2}{3}
+V_{OUT,max}
+=20\,A\times0.100\,V/A+2.5\,V
+=4.5\,V
 $$
 
 $$
-V_{ADC} = V_{OUT} \times \frac{2}{3}
+V_{OUT,min}
+=-20\,A\times0.100\,V/A+2.5\,V
+=0.5\,V
 $$
 
-This maps the zero-current ($0\,\mathrm{A}$) point from $2.5\,\mathrm{V}$ to **$1.667\,\mathrm{V}$**, fitting comfortably within the $0 \to 3.3\,\mathrm{V}$ ADC voltage rail.
+Since the maximum sensor output exceeds the 3.3 V ADC input range, an external resistor divider is used.
+
+For:
+
+$$
+R_1=10\,k\Omega,\qquad R_2=20\,k\Omega
+$$
+
+the attenuation factor is:
+
+$$
+\frac{R_2}{R_1+R_2}
+=
+\frac{20}{10+20}
+=
+\frac{2}{3}
+$$
+
+Thus:
+
+$$
+V_{ADC}=V_{OUT}\times\frac{2}{3}
+$$
+
+and the zero-current level becomes:
+
+$$
+V_{ADC,bias}
+=
+2.5\,V\times\frac{2}{3}
+\approx1.667\,V
+$$
+
+The full sensor output range is mapped to approximately:
+
+$$
+0.333\,V\leq V_{ADC}\leq3.0\,V
+$$
+
+which remains within the 3.3 V ADC range.
 
 **Internal Conductor Power Dissipation**
 
-Due to the extremely low internal primary conductor resistance ($R_{primary} \approx 1.2\,\mathrm{m\Omega}$), continuous power loss is drastically reduced compared to external shunts:
+The sensor conduction loss is estimated from:
 
 $$
-P_{sensor} = I_{RMS}^2 \times R_{primary}
+P_{sensor}=I_{RMS}^{2}R_{primary}
 $$
 
-At the nominal $15\,\mathrm{A}$ peak operating current ($I_{RMS} \approx 10.61\,\mathrm{A_{RMS}}$):
+For a 15 A peak current:
 
 $$
-P_{sensor} = (10.61\,\mathrm{A})^2 \times 1.2\,\mathrm{m\Omega} \approx 0.135\,\mathrm{W}
+I_{RMS}=
+\frac{15}{\sqrt{2}}
+\approx10.61\,A
+$$
+
+Using:
+
+$$
+R_{primary}\approx1.2\,m\Omega
+$$
+
+gives:
+
+$$
+P_{sensor}
+=
+(10.61\,A)^2\times1.2\,m\Omega
+\approx0.135\,W
 $$
 
 $$
-\boxed{P_{sensor} \approx 135\,\mathrm{mW}}
+\boxed{P_{sensor}\approx135\,mW}
 $$
-
-This minimal power dissipation eliminates thermal derating issues and reduces overall PCB thermal stress.
 
 **Noise Filtering and Bandwidth Adjustment**
 
-The ACS712 includes an internal $80\,\mathrm{kHz}$ bandwidth limit. An external filter capacitor ($C_F$) connected to the `FILTER` pin sets the overall system bandwidth and mitigates high-frequency switching noise:
+The current-sensor bandwidth is intentionally reduced to attenuate PWM-related components while retaining sufficient bandwidth for phase-current feedback and higher electrical-frequency operation, including High-Frequency Injection (HFI) techniques.
+
+For the selected filter network, the cutoff frequency is approximated by:
 
 $$
-f_{-3\mathrm{dB}} = \frac{1}{2\pi \times 20\,\mathrm{k\Omega} \times C_F}
+f_{-3dB}\approx
+\frac{1}{2\pi\times20\,k\Omega\times C_F}
 $$
 
-A $10\,\mathrm{nF}$ ceramic capacitor ($C_F = 10\,\mathrm{nF}$) is selected, establishing a cutoff frequency of approximately:
+To target approximately 1 kHz bandwidth:
 
 $$
-f_{-3\mathrm{dB}} \approx 796\,\mathrm{Hz}
+C_F\approx
+\frac{1}
+{2\pi(20\,k\Omega)(1\,kHz)}
+\approx7.96\,nF
 $$
 
-This bandwidth configuration provides effective filtering of $20\,\mathrm{kHz}$ PWM switching noise while maintaining adequate response speed for phase current monitoring and feedback control.
+A standard capacitor value of:
+
+$$
+\boxed{C_F=8.2\,nF}
+$$
+
+is therefore selected, giving:
+
+$$
+f_{-3dB}\approx
+\frac{1}
+{2\pi(20\,k\Omega)(8.2\,nF)}
+\approx971\,Hz
+$$
+
+This bandwidth is approximately one order of magnitude below the minimum 20 kHz PWM frequency. It therefore provides substantial attenuation of PWM-related components while maintaining a higher measurement bandwidth than the previous lower-bandwidth configuration, supporting phase-current feedback and higher electrical-frequency operation such as HFI.
 
 ### 5.5 Voltage Sensing
+For the `HBM_G0V48C15`, galvanic isolation is not enforced between the power and logic domains. `PGND` and `LGND` are therefore connected at a defined point within the system, allowing the switch-node and DC-link voltages to be sensed with respect to `LGND` using a resistive divider.
 
-For the `HBM_G0V48C15`, galvanic isolation is not enforced between the power and logic domains, and `PGND` and `LGND` are therefore required to be connected at a defined point within the system. This permits the switch-node and DC-link voltages to be sensed directly with respect to `LGND` using a high-voltage resistive divider.
+The divider is designed to measure the nominal 48 V DC-link voltage while tolerating transient voltages up to approximately 60 V.
 
-The divider ratio is selected such that the nominal $48\,\mathrm{V}$ DC-link operating voltage, including maximum transient overvoltage events up to $60\,\mathrm{V}$, is mapped into the valid $0 \to 3.3\,\mathrm{V}$ range of the analog sensing circuitry:
-
-$$
-V_{signal} = V_{sw} \times \frac{R_2}{R_1 + R_2}
-$$
-
-Using a lower resistor $R_2 = 10\,\mathrm{k\Omega}$ and an upper resistor network $R_1 = 180\,\mathrm{k\Omega}$ ($R_{total} = 190\,\mathrm{k\Omega}$), the voltage divider transfer function is:
+The divider transfer function is:
 
 $$
-V_{signal} = V_{sw} \times \frac{10\,\mathrm{k\Omega}}{180\,\mathrm{k\Omega} + 10\,\mathrm{k\Omega}} = V_{sw} \times \frac{1}{19}
+V_{signal}
+=
+V_{sw}
+\frac{R_2}{R_1+R_2}
 $$
 
-This gives the following nominal full-scale mapping:
+Using:
 
 $$
-60\,\mathrm{V} \rightarrow 3.158\,\mathrm{V}
+R_1=180\,k\Omega,\qquad
+R_2=10\,k\Omega
+$$
+
+gives:
+
+$$
+V_{signal}
+=
+V_{sw}
+\frac{10\,k\Omega}
+{180\,k\Omega+10\,k\Omega}
+=
+\frac{V_{sw}}{19}
+$$
+
+Therefore:
+
+$$
+60\,V\rightarrow3.158\,V
 $$
 
 $$
-48\,\mathrm{V} \rightarrow 2.526\,\mathrm{V}
+48\,V\rightarrow2.526\,V
+$$
+
+and the scaling factor is:
+
+$$
+\boxed{\text{Scaling Factor}=0.0526\,V/V}
+$$
+
+The selected divider therefore keeps the sensed voltage below the 3.3 V ADC limit while retaining a small margin for transient events.
+
+**Divider Power and ADC Source-Impedance Trade-Off**
+
+The divider current at the nominal 48 V operating voltage is:
+
+$$
+I_{divider}
+=
+\frac{48\,V}
+{180\,k\Omega+10\,k\Omega}
+\approx0.253\,mA
+$$
+
+and the total divider power is:
+
+$$
+P_{divider}
+=
+\frac{(48\,V)^2}
+{190\,k\Omega}
+\approx12.1\,mW
 $$
 
 $$
-\boxed{\text{Scaling Factor} = 0.0526\,\mathrm{V/V}}
+\boxed{P_{divider}\approx12.1\,mW}
 $$
 
-The resulting scaling makes effective use of the available ADC input range while retaining a small safety margin below the $3.3\,\mathrm{V}$ rail to prevent clipping during voltage spikes or inductive ringing. The divider upper leg $R_1$ is implemented as a series string of resistors to ensure that the voltage stress across each individual component remains within its rated working voltage, while maintaining the required creepage and clearance distances across the high-voltage portion of the PCB layout.
-
-The power dissipated by the divider under the nominal $48\,\mathrm{V}$ DC-link condition is approximately:
+However, the high resistor values result in a relatively high Thevenin source impedance at the ADC input:
 
 $$
-P_{divider} = \frac{(48\,\mathrm{V})^2}{180\,\mathrm{k\Omega} + 10\,\mathrm{k\Omega}} \approx 0.0121\,\mathrm{W}
+R_{TH}
+=
+R_1\parallel R_2
 $$
 
 $$
-\boxed{P_{divider} \approx 12.1\,\mathrm{mW}}
+R_{TH}
+=
+180\,k\Omega\parallel10\,k\Omega
+\approx9.47\,k\Omega
 $$
 
-This dissipation is distributed across the series resistor string rather than concentrated in a single component, reducing the thermal and voltage stress on each individual resistor.
+A lower-resistance alternative such as $47,k\Omega+2.7,k\Omega$ provides a significantly lower ADC source impedance:
 
-The switch-node measurement is particularly useful in operating conditions where the half-bridge is in a high-impedance state, with both MOSFETs turned off. In this condition, the switch-node voltage is no longer actively driven by either device and can provide useful information about the external load, motor phase Back-EMF, or commutation state. This makes the sensing path applicable to control and diagnostic functions such as high-impedance phase-voltage measurement and zero-crossing detection in motor-control applications.
+$$
+R_{TH,alt}
+=
+47\,k\Omega\parallel2.7\,k\Omega
+\approx2.55\,k\Omega
+$$
+
+However, the lower-resistance network increases continuous power dissipation. At 48 V:
+
+$$
+P_{alt}
+=
+\frac{(48\,V)^2}
+{47\,k\Omega+2.7\,k\Omega}
+\approx46.3\,mW
+$$
+
+Therefore, the comparison is:
+
+| Divider Network          | Thevenin Source Impedance |    Power at 48 V |
+| ------------------------ | ------------------------: | ---------------: |
+| $180,k\Omega+10,k\Omega$ |     $\approx9.47,k\Omega$ | $\approx12.1,mW$ |
+| $47,k\Omega+2.7,k\Omega$ |     $\approx2.55,k\Omega$ | $\approx46.3,mW$ |
+
+The lower-resistance option reduces the ADC source impedance by approximately 73%, making ADC sampling easier and reducing the required acquisition time. However, it increases continuous divider power by approximately 3.8 times.
+
+The selected $180,\mathrm{k\Omega}+10,\mathrm{k\Omega}$ network therefore provides a reasonable compromise between low power consumption and ADC source impedance. The ADC sampling time shall be verified against the actual ADC input requirements. If the required acquisition time cannot be achieved with the selected ADC configuration, the lower-resistance divider option may be considered.
+
+The upper resistor $R_1$ may be implemented as a series string where required to distribute the voltage stress across multiple components and satisfy the resistor voltage-rating, creepage, and clearance requirements of the PCB layout.
 
 ### 5.6 References
-
 * [TI — Bootstrap Circuitry Selection for Half-Bridge Configurations](https://www.ti.com/lit/an/slua887a/slua887a.pdf)
 * [Infineon — Using Monolithic High-Voltage Gate Drivers](https://www.infineon.com/row/public/documents/24/42/infineon-using-monolithic-high-voltage-gate-drivers-applicationnotes-en.pdf)
 * [Seminar 1400 Topic 2 APDX Estimating MOSFET Parameters from the Data Sheet](https://www.ti.com/lit/ml/slup170/slup170.pdf?ts=1786803369734)
